@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard — PAPMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
+<style>
+:root{--navy:#0A194E;--navy2:#0D2260;--amber:#FFC107;--amber2:#FFD54F;--amber-dark:#E6AD00;--white:#FFFFFF;--off:#F7F8FC;--off2:#EEF1F8;--text:#1A2340;--muted:#5A6A8A;--soft:#9AAAC0;--border:#DDE3F0;--green:#1DA462;--green-dim:rgba(29,164,98,0.1);--red:#E53935;--red-dim:rgba(229,57,53,0.1);--blue:#1E7EDE;--blue-dim:rgba(30,126,222,0.1);--orange:#F57C00;--orange-dim:rgba(245,124,0,0.1);--sidebar:230px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(--text);display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50}
+.sidebar-logo{padding:1.4rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:0.65rem;text-decoration:none}
+.logo-badge{width:32px;height:32px;background:var(--amber);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.logo-text{font-size:1.05rem;font-weight:800;color:var(--white)}
+.sidebar-section{padding:1.1rem 0 0.4rem}
+.sidebar-section-label{font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 1.25rem;margin-bottom:0.25rem;display:block}
+.nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.6rem 1.25rem;color:rgba(255,255,255,0.52);font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.18s;border-left:3px solid transparent}
+.nav-item:hover{color:rgba(255,255,255,0.88);background:rgba(255,255,255,0.055)}
+.nav-item.active{color:var(--white);background:rgba(255,255,255,0.1);border-left-color:var(--amber)}
+.nav-item .ni{width:20px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:0.58rem;font-weight:700;padding:0.1rem 0.38rem;border-radius:8px;min-width:18px;text-align:center}
+.sidebar-footer{margin-top:auto;border-top:1px solid rgba(255,255,255,0.08);padding:1rem 1.25rem}
+.user-card{display:flex;align-items:center;gap:0.65rem}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:var(--navy);flex-shrink:0}
+.user-name{font-size:0.82rem;font-weight:700;color:var(--white)}
+.user-role{font-size:0.65rem;color:rgba(255,255,255,0.38)}
+.logout-btn{margin-left:auto;width:28px;height:28px;border:none;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);cursor:pointer;border-radius:6px;font-size:0.85rem;transition:all 0.18s;display:flex;align-items:center;justify-content:center}
+.logout-btn:hover{background:var(--red-dim);color:var(--red)}
+main{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0.9rem 2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:40}
+.topbar-title{font-size:1.18rem;font-weight:800;color:var(--navy)}
+.topbar-sub{font-size:0.76rem;color:var(--muted);margin-top:0.1rem}
+.topbar-right{display:flex;align-items:center;gap:0.65rem}
+.icon-btn{width:36px;height:36px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.95rem;transition:all 0.18s;position:relative}
+.icon-btn:hover{border-color:var(--navy);background:var(--off)}
+.badge-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--white)}
+.user-chip{display:flex;align-items:center;gap:0.5rem;border:1.5px solid var(--border);background:var(--white);padding:0.3rem 0.75rem 0.3rem 0.4rem;cursor:pointer;transition:border-color 0.18s}
+.user-chip:hover{border-color:var(--navy)}
+.chip-avatar{width:26px;height:26px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:var(--amber)}
+.chip-name{font-size:0.78rem;font-weight:600}
+.chip-role{font-size:0.62rem;color:var(--muted)}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:700;transition:all 0.18s;display:inline-flex;align-items:center;gap:0.4rem}
+.btn-primary{background:var(--navy);color:var(--white);padding:0.55rem 1.1rem;font-size:0.8rem}
+.btn-primary:hover{background:var(--navy2)}
+.btn-amber{background:var(--amber);color:var(--navy);padding:0.55rem 1.1rem;font-size:0.8rem}
+.btn-amber:hover{background:var(--amber2)}
+.btn-ghost{background:var(--off);color:var(--navy);padding:0.55rem 1.1rem;font-size:0.8rem;border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--navy)}
+.btn-sm{padding:0.35rem 0.75rem;font-size:0.72rem}
+.content{padding:1.75rem 2rem;flex:1}
+.page{display:none}
+.page.active{display:block}
+/* welcome banner */
+.welcome-banner{background:var(--navy);padding:1.5rem 1.75rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.welcome-banner::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,193,7,0.12) 0%,transparent 70%)}
+.wb-title{font-family:'Lora',serif;font-size:1.25rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
+.wb-sub{font-size:0.8rem;color:rgba(255,255,255,0.55)}
+.wb-actions{display:flex;gap:0.65rem;position:relative}
+/* stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border:1px solid var(--border);padding:1.2rem 1.4rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+.sc-navy::after{background:var(--navy)} .sc-green::after{background:var(--green)} .sc-amber::after{background:var(--amber)} .sc-red::after{background:var(--red)} .sc-blue::after{background:var(--blue)}
+.stat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.65rem}
+.stat-label{font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.stat-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.95rem}
+.si-navy{background:rgba(10,25,78,0.08)} .si-green{background:var(--green-dim)} .si-amber{background:rgba(255,193,7,0.14)} .si-red{background:var(--red-dim)} .si-blue{background:var(--blue-dim)}
+.stat-value{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:0.25rem}
+.trend-up{font-size:0.72rem;font-weight:600;color:var(--green)} .trend-down{font-size:0.72rem;font-weight:600;color:var(--red)}
+.stat-meta{font-size:0.72rem;color:var(--muted);margin-top:0.15rem}
+.mini-bar{margin-top:0.5rem;height:4px;background:var(--off2);border-radius:2px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:2px}
+/* charts */
+.charts-row{display:grid;grid-template-columns:1.1fr 0.9fr;gap:1.1rem;margin-bottom:1.5rem}
+.card{background:var(--white);border:1px solid var(--border)}
+.card-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.card-title{font-size:0.92rem;font-weight:700;color:var(--navy)}
+.card-sub{font-size:0.72rem;color:var(--muted);margin-top:0.12rem}
+.card-body{padding:1.2rem 1.4rem}
+.card-footer{padding:0.75rem 1.4rem;border-top:1px solid var(--border);background:var(--off)}
+.svg-chart{width:100%}
+.chart-legend{display:flex;gap:1.1rem;margin-top:0.65rem}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.legend-item{display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--muted)}
+.bar-group{display:flex;align-items:flex-end;gap:7px;height:130px;border-bottom:1px solid var(--border)}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:0}
+.bar-fill{width:100%;border-radius:3px 3px 0 0;cursor:pointer;transition:opacity 0.2s}
+.bar-fill:hover{opacity:0.8}
+.bar-lbl{font-size:0.6rem;color:var(--muted);margin-top:0.3rem;text-align:center;line-height:1.2}
+.bar-val{font-size:0.6rem;font-weight:700;color:var(--text);margin-bottom:0.15rem}
+/* layout */
+.two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:1.1rem;margin-bottom:1.5rem}
+/* tasks */
+.task-item{display:flex;align-items:flex-start;gap:0.85rem;padding:0.85rem 1.4rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.task-item:hover{background:var(--off)}
+.task-item:last-child{border-bottom:none}
+.task-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.td-high{background:var(--red)} .td-med{background:var(--orange)} .td-low{background:var(--blue)} .td-done{background:var(--green)}
+.task-body{flex:1;min-width:0}
+.task-title{font-size:0.84rem;font-weight:600;color:var(--text)}
+.task-title.struck{text-decoration:line-through;color:var(--soft)}
+.task-meta{font-size:0.7rem;color:var(--muted);margin-top:0.15rem}
+.pill{font-size:0.62rem;font-weight:700;padding:0.15rem 0.5rem;display:inline-block}
+.pill-high{background:var(--red-dim);color:var(--red)} .pill-med{background:var(--orange-dim);color:var(--orange)} .pill-low{background:var(--blue-dim);color:var(--blue)} .pill-done{background:var(--green-dim);color:var(--green)}
+.pill-approved{background:var(--green-dim);color:var(--green)} .pill-pending{background:rgba(255,193,7,0.15);color:var(--amber-dark)} .pill-revision{background:var(--red-dim);color:var(--red)} .pill-review{background:var(--blue-dim);color:var(--blue)} .pill-draft{background:var(--off2);color:var(--muted)}
+/* activity */
+.activity-item{display:flex;gap:0.75rem;padding:0.85rem 1.4rem;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.act-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0}
+.aci-blue{background:var(--blue-dim)} .aci-green{background:var(--green-dim)} .aci-amber{background:rgba(255,193,7,0.12)} .aci-red{background:var(--red-dim)} .aci-navy{background:rgba(10,25,78,0.08)}
+.act-text{font-size:0.8rem;color:var(--text);line-height:1.5}
+.act-time{font-size:0.67rem;color:var(--soft);margin-top:0.18rem}
+/* table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:0.7rem 1.4rem;font-size:0.67rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:var(--off);white-space:nowrap}
+td{padding:0.85rem 1.4rem;border-bottom:1px solid var(--border);font-size:0.82rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(10,25,78,0.018)}
+.td-title{font-weight:600;color:var(--text)} .td-muted{color:var(--muted);font-size:0.78rem}
+.score-good{color:var(--green);font-weight:700} .score-ok{color:var(--orange);font-weight:700}
+a.link-btn{color:var(--navy);font-size:0.78rem;font-weight:700;text-decoration:none;cursor:pointer}
+a.link-btn:hover{color:var(--amber-dark)}
+/* tabs */
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 1.4rem;gap:0;overflow-x:auto}
+.tab{padding:0.8rem 0.9rem;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all 0.18s;white-space:nowrap}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+/* pipeline */
+.pipeline{display:flex;gap:0;overflow-x:auto;padding:1.2rem 1.4rem}
+.pipeline-step{display:flex;align-items:center;gap:0;flex-shrink:0}
+.pipeline-node{display:flex;flex-direction:column;align-items:center;gap:0.4rem}
+.pn-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0}
+.pn-done{background:var(--green);color:white} .pn-active{background:var(--navy);color:var(--amber);border:2px solid var(--amber)} .pn-pending{background:var(--off2);color:var(--muted);border:1.5px solid var(--border)}
+.pn-label{font-size:0.62rem;color:var(--muted);text-align:center;max-width:70px;line-height:1.3}
+.pipeline-arrow{width:30px;height:2px;background:var(--border);margin:0 2px;flex-shrink:0;margin-bottom:16px}
+.pipeline-arrow.done-arrow{background:var(--green)}
+/* pbar */
+.pbar-wrap{display:flex;align-items:center;gap:0.7rem}
+.pbar{height:7px;background:var(--off2);border-radius:4px;overflow:hidden;flex:1}
+.pbar-fill{height:100%;border-radius:4px;background:var(--navy)}
+.pbar-val{font-size:0.72rem;font-weight:700;color:var(--text);min-width:32px;text-align:right}
+/* milestone */
+.ms-item{display:flex;gap:1rem;padding:0.9rem 1.4rem;border-bottom:1px solid var(--border);align-items:flex-start;transition:background 0.15s;cursor:pointer}
+.ms-item:hover{background:var(--off)}
+.ms-item:last-child{border-bottom:none}
+.ms-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.ms-done{background:var(--green-dim);color:var(--green);border:1px solid rgba(29,164,98,0.2)}
+.ms-active{background:rgba(10,25,78,0.08);color:var(--navy);border:1px solid rgba(10,25,78,0.15)}
+.ms-upcoming{background:var(--off2);color:var(--soft);border:1px solid var(--border)}
+.ms-title{font-size:0.85rem;font-weight:700;color:var(--text)}
+.ms-desc{font-size:0.72rem;color:var(--muted);margin-top:0.15rem}
+.ms-date-tag{font-size:0.7rem;font-weight:600;margin-top:0.2rem}
+.dg{color:var(--green)} .do{color:var(--orange)} .dr{color:var(--red)} .dm{color:var(--soft)}
+/* feedback */
+.feedback-card{border:1px solid var(--border);padding:1.25rem;margin-bottom:1rem}
+.fc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem}
+.fc-from{font-size:0.85rem;font-weight:700;color:var(--navy)}
+.fc-date{font-size:0.7rem;color:var(--muted);margin-top:0.1rem}
+.fc-body{font-size:0.84rem;color:var(--text);line-height:1.75}
+.fc-score{display:flex;align-items:center;gap:0.5rem;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border)}
+.fc-score-val{font-size:0.85rem;font-weight:800}
+.fc-score-label{font-size:0.72rem;color:var(--muted)}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:1rem;font-weight:700;color:var(--navy)}
+.modal-close{width:30px;height:30px;border:none;background:var(--off);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;border-radius:4px}
+.modal-body{padding:1.5rem}
+.form-group{margin-bottom:1.1rem}
+.form-label{display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--off);border:1.5px solid var(--border);padding:0.72rem 0.9rem;font-family:inherit;font-size:0.88rem;color:var(--text);outline:none;transition:border-color 0.18s;border-radius:0}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--navy);background:var(--white)}
+.form-textarea{resize:vertical;min-height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.65rem}
+/* notif panel */
+.notif-panel{position:fixed;top:0;right:0;bottom:0;width:340px;background:var(--white);border-left:1px solid var(--border);z-index:150;transform:translateX(100%);transition:transform 0.28s;box-shadow:-8px 0 30px rgba(10,25,78,0.1);overflow-y:auto}
+.notif-panel.open{transform:translateX(0)}
+.notif-panel-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:1}
+.notif-item{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;gap:0.75rem;cursor:pointer;transition:background 0.15s}
+.notif-item:hover{background:var(--off)}
+.notif-item.unread{background:rgba(10,25,78,0.025)}
+.ni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ni-blue{background:var(--blue)} .ni-green{background:var(--green)} .ni-red{background:var(--red)} .ni-amber{background:var(--amber)}
+.notif-text{font-size:0.82rem;color:var(--text);line-height:1.5}
+.notif-time{font-size:0.67rem;color:var(--soft);margin-top:0.18rem}
+/* alert */
+.alert{display:flex;gap:0.75rem;padding:0.85rem 1rem;border-left:3px solid;margin-bottom:1rem}
+.alert-info{background:var(--blue-dim);border-color:var(--blue)}
+.alert-warning{background:rgba(255,193,7,0.1);border-color:var(--amber)}
+.alert-success{background:var(--green-dim);border-color:var(--green)}
+.alert-error{background:var(--red-dim);border-color:var(--red)}
+.alert-text{font-size:0.82rem;color:var(--text);line-height:1.5}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem}
+.section-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:700;color:var(--navy)}
+.section-sub{font-size:0.78rem;color:var(--muted);margin-top:0.2rem}
+@media(max-width:900px){body{grid-template-columns:1fr}.sidebar{display:none}.stats-grid{grid-template-columns:1fr 1fr}.charts-row,.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="sidebar-logo" href="index.html"><div class="logo-badge">🎓</div><span class="logo-text">PAPMS</span></a>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Main</span>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="nav('submissions',this)"><span class="ni">📄</span> My Submissions</div>
+    <div class="nav-item" onclick="nav('milestones',this)"><span class="ni">🎯</span> Milestones</div>
+    <div class="nav-item" onclick="nav('feedback',this)"><span class="ni">💬</span> Feedback <span class="nav-badge">2</span></div>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Progress</span>
+    <div class="nav-item" onclick="nav('pipeline',this)"><span class="ni">🔀</span> Assessment Pipeline</div>
+    <div class="nav-item" onclick="nav('reports',this)"><span class="ni">📊</span> Reports</div>
+    <div class="nav-item" onclick="nav('schedule',this)"><span class="ni">📅</span> Schedule</div>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Account</span>
+    <div class="nav-item" onclick="nav('settings',this)"><span class="ni">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">SJ</div>
+      <div><div class="user-name">Sarah Johnson</div><div class="user-role">PhD Student</div></div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⏻</button>
+    </div>
+  </div>
+</aside>
+ 
+<main>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="tb-title">Welcome back, Sarah! 👋</div>
+      <div class="topbar-sub" id="tb-sub">Here's your academic progress overview · Thursday, March 19, 2026</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleNotif()">🔔<span class="badge-dot"></span></button>
+      <div class="user-chip">
+        <div class="chip-avatar">SJ</div>
+        <div><div class="chip-name">Sarah Johnson</div><div class="chip-role">Student</div></div>
+        <span style="font-size:0.6rem;color:var(--muted);margin-left:4px">▾</span>
+      </div>
+      <button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button>
+    </div>
+  </div>
+ 
+  <div class="content">
+ 
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="welcome-banner">
+        <div><div class="wb-title">Welcome back, Sarah! 👋</div><div class="wb-sub">You're making great progress. 3 tasks due this week — keep going!</div></div>
+        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><button class="btn btn-ghost btn-sm" onclick="nav('pipeline',null)">View Pipeline</button></div>
+      </div>
+ 
+      <div class="stats-grid">
+        <div class="stat-card sc-navy">
+          <div class="stat-head"><div class="stat-label">Overall Progress</div><div class="stat-icon si-navy">📈</div></div>
+          <div class="stat-value">85%</div>
+          <div class="trend-up">↑ 12% from last month</div>
+          <div class="mini-bar"><div class="mini-bar-fill" style="width:85%;background:var(--navy)"></div></div>
+        </div>
+        <div class="stat-card sc-amber">
+          <div class="stat-head"><div class="stat-label">Pending Tasks</div><div class="stat-icon si-amber">⏰</div></div>
+          <div class="stat-value">3</div>
+          <div class="stat-meta">2 due this week</div>
+        </div>
+        <div class="stat-card sc-green">
+          <div class="stat-head"><div class="stat-label">Milestones Done</div><div class="stat-icon si-green">✅</div></div>
+          <div class="stat-value">8<span style="font-size:1.1rem;color:var(--muted)">/12</span></div>
+          <div class="stat-meta">4 remaining</div>
+        </div>
+        <div class="stat-card sc-red">
+          <div class="stat-head"><div class="stat-label">New Feedback</div><div class="stat-icon si-red">💬</div></div>
+          <div class="stat-value">2</div>
+          <div class="trend-down">Awaiting review</div>
+        </div>
+      </div>
+ 
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Progress Over Time</div><div class="card-sub">Academic progress across the last 6 months</div></div>
+          </div>
+          <div class="card-body">
+            <svg class="svg-chart" viewBox="0 0 460 140" style="height:145px">
+              <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0A194E" stop-opacity="0.14"/><stop offset="100%" stop-color="#0A194E" stop-opacity="0.01"/></linearGradient></defs>
+              <line x1="40" y1="10" x2="455" y2="10" stroke="#DDE3F0" stroke-width="1"/>
+              <line x1="40" y1="40" x2="455" y2="40" stroke="#DDE3F0" stroke-width="1"/>
+              <line x1="40" y1="70" x2="455" y2="70" stroke="#DDE3F0" stroke-width="1"/>
+              <line x1="40" y1="100" x2="455" y2="100" stroke="#DDE3F0" stroke-width="1"/>
+              <line x1="40" y1="118" x2="455" y2="118" stroke="#DDE3F0" stroke-width="1"/>
+              <text x="32" y="13" font-size="9" fill="#9AAAC0" text-anchor="end">100</text>
+              <text x="32" y="73" font-size="9" fill="#9AAAC0" text-anchor="end">50</text>
+              <text x="32" y="121" font-size="9" fill="#9AAAC0" text-anchor="end">0</text>
+              <path d="M60,114 L130,105 L205,90 L280,72 L360,48 L440,18 L440,118 L60,118Z" fill="url(#pg)"/>
+              <polyline points="60,114 130,105 205,90 280,72 360,48 440,18" fill="none" stroke="#0A194E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="60" cy="114" r="4" fill="#fff" stroke="#0A194E" stroke-width="2"/>
+              <circle cx="130" cy="105" r="4" fill="#fff" stroke="#0A194E" stroke-width="2"/>
+              <circle cx="205" cy="90" r="4" fill="#fff" stroke="#0A194E" stroke-width="2"/>
+              <circle cx="280" cy="72" r="4" fill="#fff" stroke="#0A194E" stroke-width="2"/>
+              <circle cx="360" cy="48" r="5" fill="#FFC107" stroke="#0A194E" stroke-width="2"/>
+              <circle cx="440" cy="18" r="5" fill="#FFC107" stroke="#0A194E" stroke-width="2"/>
+              <text x="60" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">Jan</text>
+              <text x="130" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">Feb</text>
+              <text x="205" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">Mar</text>
+              <text x="280" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">Apr</text>
+              <text x="360" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">May</text>
+              <text x="440" y="134" font-size="9" fill="#9AAAC0" text-anchor="middle">Jun</text>
+            </svg>
+            <div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Progress %</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Assessment Scores</div><div class="card-sub">Latest evaluation by category</div></div></div>
+          <div class="card-body">
+            <div class="bar-group">
+              <div class="bar-col"><div class="bar-val">82%</div><div class="bar-fill" style="height:82%;background:var(--green)"></div><div class="bar-lbl">Literature Review</div></div>
+              <div class="bar-col"><div class="bar-val">78%</div><div class="bar-fill" style="height:78%;background:var(--green)"></div><div class="bar-lbl">Methodology</div></div>
+              <div class="bar-col"><div class="bar-val">91%</div><div class="bar-fill" style="height:91%;background:var(--green)"></div><div class="bar-lbl">Data Analysis</div></div>
+              <div class="bar-col"><div class="bar-val">86%</div><div class="bar-fill" style="height:86%;background:var(--green)"></div><div class="bar-lbl">Writing Quality</div></div>
+            </div>
+            <div class="chart-legend" style="margin-top:0.75rem"><div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Score</div></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Upcoming Tasks & Milestones</div><div class="card-sub">Complete these to advance your progress</div></div><button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Submit</button></div>
+          <div class="task-item"><div class="task-dot td-high"></div><div class="task-body"><div class="task-title">Submit Chapter 4 Draft</div><div class="task-meta">Due in 3 days</div></div><span class="pill pill-high">High Priority</span></div>
+          <div class="task-item"><div class="task-dot td-med"></div><div class="task-body"><div class="task-title">Complete Literature Review Section</div><div class="task-meta">Due in 1 week</div></div><span class="pill pill-med">Medium</span></div>
+          <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">Prepare Presentation Slides</div><div class="task-meta">Due in 2 weeks</div></div><span class="pill pill-low">Low</span></div>
+          <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">Supervisor Meeting Notes</div><div class="task-meta">Due in 2 weeks</div></div><span class="pill pill-low">Low</span></div>
+          <div class="task-item"><div class="task-dot td-done"></div><div class="task-body"><div class="task-title struck">Data Analysis Report</div><div class="task-meta">Completed 2 days ago</div></div><span class="pill pill-done">Done</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.1rem">
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Recent Activity</div><div class="card-sub">Latest notifications</div></div></div>
+            <div class="activity-item"><div class="act-icon aci-navy">💬</div><div><div class="act-text"><strong>Feedback received</strong> — Dr. Chen reviewed Ch. 3</div><div class="act-time">2 hours ago</div></div></div>
+            <div class="activity-item"><div class="act-icon aci-green">✅</div><div><div class="act-text"><strong>Milestone completed</strong> — Data Collection Phase</div><div class="act-time">1 day ago</div></div></div>
+            <div class="activity-item"><div class="act-icon aci-amber">📋</div><div><div class="act-text"><strong>Task assigned</strong> — Prepare for progress review</div><div class="act-time">2 days ago</div></div></div>
+            <div class="activity-item"><div class="act-icon aci-green">✅</div><div><div class="act-text"><strong>Submission approved</strong> — Methodology chapter</div><div class="act-time">3 days ago</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">My Supervisor</div></div>
+            <div style="padding:1.1rem 1.4rem;display:flex;align-items:center;gap:1rem">
+              <div style="width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;color:var(--amber);flex-shrink:0">MC</div>
+              <div style="flex:1"><div style="font-weight:700;color:var(--navy);font-size:0.88rem">Dr. Michael Chen</div><div style="font-size:0.72rem;color:var(--muted)">Research Supervisor · Computer Science</div><div style="font-size:0.7rem;color:var(--blue);margin-top:0.15rem">m.chen@university.edu</div></div>
+              <button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting')">📅</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header"><div><div class="card-title">Submission History</div><div class="card-sub">Track all submissions and their status</div></div></div>
+        <div class="tabs">
+          <div class="tab active" onclick="stab(this,'st-all')">All Submissions</div>
+          <div class="tab" onclick="stab(this,'st-approved')">Approved</div>
+          <div class="tab" onclick="stab(this,'st-pending')">Pending Review</div>
+          <div class="tab" onclick="stab(this,'st-revision')">Needs Revision</div>
+        </div>
+        <div id="st-all" class="tab-pane active">
+          <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Submitted</th><th>Status</th><th>Score</th><th>Actions</th></tr></thead><tbody>
+            <tr><td class="td-title">Chapter 3: Methodology</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-15</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">92%</span></td><td><a class="link-btn" onclick="nav('feedback',null)">View Feedback</a></td></tr>
+            <tr><td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">2026-03-10</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">88%</span></td><td><a class="link-btn" onclick="nav('feedback',null)">View Feedback</a></td></tr>
+            <tr><td class="td-title">Research Proposal</td><td class="td-muted">Proposal</td><td class="td-muted">2026-03-08</td><td><span class="pill pill-pending">Pending</span></td><td class="td-muted">—</td><td><a class="link-btn">View Details</a></td></tr>
+            <tr><td class="td-title">Data Analysis Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-05</td><td><span class="pill pill-revision">Needs Revision</span></td><td><span class="score-ok">71%</span></td><td><a class="link-btn" onclick="openM('modal-submit')">Resubmit</a></td></tr>
+            <tr><td class="td-title">Introduction Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-02-20</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">85%</span></td><td><a class="link-btn">View Details</a></td></tr>
+          </tbody></table></div>
+        </div>
+        <div id="st-approved" class="tab-pane">
+          <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Submitted</th><th>Score</th></tr></thead><tbody>
+            <tr><td class="td-title">Chapter 3: Methodology</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-15</td><td><span class="score-good">92%</span></td></tr>
+            <tr><td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">2026-03-10</td><td><span class="score-good">88%</span></td></tr>
+            <tr><td class="td-title">Introduction Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-02-20</td><td><span class="score-good">85%</span></td></tr>
+          </tbody></table></div>
+        </div>
+        <div id="st-pending" class="tab-pane">
+          <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Submitted</th><th>Expected Review</th></tr></thead><tbody>
+            <tr><td class="td-title">Research Proposal</td><td class="td-muted">Proposal</td><td class="td-muted">2026-03-08</td><td class="td-muted">~5 business days</td></tr>
+          </tbody></table></div>
+        </div>
+        <div id="st-revision" class="tab-pane">
+          <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Score</th><th>Supervisor Comments</th><th>Actions</th></tr></thead><tbody>
+            <tr><td class="td-title">Data Analysis Chapter</td><td><span class="score-ok">71%</span></td><td class="td-muted">Strengthen statistical justification; fix residuals</td><td><a class="link-btn" onclick="openM('modal-submit')">Resubmit →</a></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- SUBMISSIONS PAGE -->
+    <div class="page" id="page-submissions">
+      <div class="section-head">
+        <div><div class="section-title">My Submissions</div><div class="section-sub">All submitted work and current review status</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">+ New Submission</button>
+      </div>
+      <div class="alert alert-info"><div class="act-icon aci-blue" style="flex-shrink:0;font-size:1rem">ℹ️</div><div class="alert-text"><strong>Research Proposal</strong> is currently under review. Expected feedback within 5 business days.</div></div>
+      <div class="card">
+        <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Chapter</th><th>Submitted</th><th>Supervisor</th><th>Status</th><th>Score</th><th>Actions</th></tr></thead><tbody>
+          <tr><td class="td-title">Chapter 3: Methodology</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 3</td><td class="td-muted">2026-03-15</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">92%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">Ch. 2</td><td class="td-muted">2026-03-10</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">88%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Research Proposal</td><td class="td-muted">Proposal</td><td class="td-muted">—</td><td class="td-muted">2026-03-08</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-pending">Pending</span></td><td class="td-muted">—</td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Data Analysis Chapter</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 4</td><td class="td-muted">2026-03-05</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-revision">Needs Revision</span></td><td><span class="score-ok">71%</span></td><td><a class="link-btn" onclick="openM('modal-submit')">Resubmit</a></td></tr>
+          <tr><td class="td-title">Introduction Chapter</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 1</td><td class="td-muted">2026-02-20</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">85%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Research Background</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 1</td><td class="td-muted">2026-02-01</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">79%</span></td><td><a class="link-btn">View</a></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+ 
+    <!-- MILESTONES PAGE -->
+    <div class="page" id="page-milestones">
+      <div class="section-head">
+        <div><div class="section-title">Academic Milestones</div><div class="section-sub">Track your progress through the postgraduate journey</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.5rem">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Overall Progress</div></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.1rem">
+              <svg viewBox="0 0 80 80" style="width:80px;height:80px;flex-shrink:0">
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--off2)" stroke-width="8"/>
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--navy)" stroke-width="8" stroke-dasharray="213.6" stroke-dashoffset="53.4" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+                <text x="40" y="44" font-size="15" font-weight="700" fill="var(--navy)" text-anchor="middle" font-family="'Lora',serif">75%</text>
+              </svg>
+              <div>
+                <div style="font-size:1.5rem;font-weight:800;color:var(--navy);font-family:'Lora',serif">9 / 12</div>
+                <div style="font-size:0.82rem;color:var(--muted)">milestones completed</div>
+                <div class="trend-up" style="margin-top:0.3rem;font-size:0.75rem">↑ On track for Dec 2026</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">Completed</span><div class="pbar"><div class="pbar-fill" style="width:75%;background:var(--green)"></div></div><span class="pbar-val" style="color:var(--green)">9</span></div>
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">In Progress</span><div class="pbar"><div class="pbar-fill" style="width:8.3%;background:var(--amber)"></div></div><span class="pbar-val" style="color:var(--amber-dark)">1</span></div>
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">Upcoming</span><div class="pbar"><div class="pbar-fill" style="width:16.7%;background:var(--border)"></div></div><span class="pbar-val" style="color:var(--soft)">2</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Programme Timeline</div></div>
+          <div class="card-body" style="font-size:0.82rem">
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Programme Start</span><span style="font-weight:600">January 2024</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Current Stage</span><span style="font-weight:600;color:var(--navy)">Chapter 4 Writing</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Expected Submission</span><span style="font-weight:600">September 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Expected Graduation</span><span style="font-weight:600">December 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0"><span style="color:var(--muted)">Programme</span><span style="font-weight:600">PhD Computer Science</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Full Milestone Tracker</div><div class="card-sub">All 12 academic milestones with current status</div></div></div>
+        <div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Research Proposal Approved</div><div class="ms-desc">Initial proposal submitted and approved by department committee</div></div><div class="ms-date-tag dg">Completed — Jan 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Supervisor Assignment</div><div class="ms-desc">Assigned to Dr. Michael Chen, Computer Science</div></div><div class="ms-date-tag dg">Completed — Feb 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Ethics Committee Clearance</div><div class="ms-desc">Research ethics approved for data collection involving human subjects</div></div><div class="ms-date-tag dg">Completed — Mar 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Preliminary Literature Review</div><div class="ms-desc">Initial literature review (50+ sources) approved by supervisor</div></div><div class="ms-date-tag dg">Completed — Jun 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Data Collection Phase</div><div class="ms-desc">Primary data collected from 120 research participants</div></div><div class="ms-date-tag dg">Completed — Nov 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">6-Month Progress Review</div><div class="ms-desc">Passed with commendation by review panel</div></div><div class="ms-date-tag dg">Completed — Dec 2024</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Introduction & Background (Ch. 1)</div><div class="ms-desc">Approved with minor revisions — Score 85%</div></div><div class="ms-date-tag dg">Completed — Feb 2026</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Literature Review Final (Ch. 2)</div><div class="ms-desc">Comprehensive review of 200+ sources — Score 88%</div></div><div class="ms-date-tag dg">Completed — Mar 2026</div></div>
+          <div class="ms-item"><div class="ms-icon ms-done">✓</div><div style="flex:1"><div class="ms-title">Research Methodology (Ch. 3)</div><div class="ms-desc">Methodology chapter fully approved — Score 92%</div></div><div class="ms-date-tag dg">Completed — Mar 2026</div></div>
+          <div class="ms-item" style="background:rgba(10,25,78,0.025)"><div class="ms-icon ms-active">→</div><div style="flex:1"><div class="ms-title">Data Analysis Chapter (Ch. 4)</div><div class="ms-desc">Currently in revision — statistical justification needs strengthening</div></div><div class="ms-date-tag do">Due — Apr 30, 2026</div></div>
+          <div class="ms-item"><div class="ms-icon ms-upcoming">○</div><div style="flex:1"><div class="ms-title">Discussion & Conclusions (Ch. 5)</div><div class="ms-desc">Final chapter — synthesis, implications and future research</div></div><div class="ms-date-tag dm">Planned — Jul 2026</div></div>
+          <div class="ms-item"><div class="ms-icon ms-upcoming">○</div><div style="flex:1"><div class="ms-title">Final Thesis Submission</div><div class="ms-desc">Complete thesis submitted for external examination</div></div><div class="ms-date-tag dm">Planned — Sep 2026</div></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- FEEDBACK PAGE -->
+    <div class="page" id="page-feedback">
+      <div class="section-head">
+        <div><div class="section-title">Supervisor Feedback</div><div class="section-sub">All feedback from Dr. Michael Chen</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting')">📅 Request Meeting</button>
+      </div>
+      <div class="alert alert-warning"><div class="alert-text">You have <strong>2 unread feedback items</strong> requiring your attention. Please review and take action on revision requests.</div></div>
+      <div>
+        <div class="feedback-card" style="border-left:3px solid var(--blue)">
+          <div class="fc-header"><div><div class="fc-from">Chapter 3: Methodology — Detailed Review</div><div class="fc-date">Dr. Michael Chen · 2 hours ago</div></div><span class="pill pill-review">New</span></div>
+          <div class="fc-body">Great work on the methodology chapter. Your justification for grounded theory is sound and well-evidenced. I have a few suggestions for strengthening further:<br/><br/><strong>1. Sampling Strategy (Section 3.2):</strong> Expand on the rationale for your sample size of 120 participants. Include a power analysis calculation to justify this number statistically.<br/><br/><strong>2. Data Validation (Section 3.4):</strong> Add detail on triangulation procedures. Describe how you will cross-validate findings across your three data sources.<br/><br/>Overall this is excellent work. These are minor revisions — please resubmit by next Friday.</div>
+          <div class="fc-score"><span class="fc-score-val" style="color:var(--green)">92%</span><span class="fc-score-label">Assessment Score — Approved ✓</span></div>
+        </div>
+        <div class="feedback-card" style="border-left:3px solid var(--orange)">
+          <div class="fc-header"><div><div class="fc-from">Data Analysis Chapter — Revision Required</div><div class="fc-date">Dr. Michael Chen · 5 days ago</div></div><span class="pill pill-revision">Revision Required</span></div>
+          <div class="fc-body">The data analysis chapter shows good foundational work but requires significant revision. Key issues:<br/><br/><strong>Statistical Analysis:</strong> Your regression model needs better justification. Explain why you chose OLS regression over alternatives and address the heteroskedasticity detected in your residuals.<br/><br/><strong>Visualisations:</strong> Several figures lack proper labels and captions. All charts must include axis labels, units, and descriptive captions.<br/><br/>Please address these points and resubmit. I'm happy to meet to discuss the statistical issues.</div>
+          <div class="fc-score"><span class="fc-score-val" style="color:var(--orange)">71%</span><span class="fc-score-label">Needs Revision — Action Required ⚠</span></div>
+        </div>
+        <div class="feedback-card" style="border-left:3px solid var(--green);opacity:0.9">
+          <div class="fc-header"><div><div class="fc-from">Literature Review Final — Approval</div><div class="fc-date">Dr. Michael Chen · 12 days ago</div></div><span class="pill pill-approved">Approved</span></div>
+          <div class="fc-body">Excellent literature review. Comprehensive coverage of key theoretical frameworks and strong critical analysis. The synthesis of conflicting perspectives in Section 2.4 is particularly impressive. This chapter is approved — proceed to Chapter 3 as planned.</div>
+          <div class="fc-score"><span class="fc-score-val" style="color:var(--green)">88%</span><span class="fc-score-label">Approved ✓</span></div>
+        </div>
+        <div class="feedback-card" style="border-left:3px solid var(--green);opacity:0.85">
+          <div class="fc-header"><div><div class="fc-from">Introduction Chapter — Approval</div><div class="fc-date">Dr. Michael Chen · 1 month ago</div></div><span class="pill pill-approved">Approved</span></div>
+          <div class="fc-body">Good introduction. The research problem is clearly defined and objectives are SMART. Approved with minor corrections noted in the annotated document (see attachments). Proceed to Chapter 2.</div>
+          <div class="fc-score"><span class="fc-score-val" style="color:var(--green)">85%</span><span class="fc-score-label">Approved ✓</span></div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- PIPELINE PAGE -->
+    <div class="page" id="page-pipeline">
+      <div class="section-head">
+        <div><div class="section-title">Assessment Pipeline</div><div class="section-sub">Your progress through the 8-stage postgraduate assessment process</div></div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header"><div><div class="card-title">Current Stage</div><div class="card-sub">Stage 4 of 8 — Data Analysis & Writing</div></div></div>
+        <div class="pipeline">
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Proposal Submission</div></div></div>
+          <div class="pipeline-arrow done-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Ethics Clearance</div></div></div>
+          <div class="pipeline-arrow done-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Data Collection</div></div></div>
+          <div class="pipeline-arrow done-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-active">4</div><div class="pn-label" style="color:var(--navy);font-weight:700">Data Analysis</div></div></div>
+          <div class="pipeline-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">5</div><div class="pn-label">Chapter Writing</div></div></div>
+          <div class="pipeline-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">6</div><div class="pn-label">Supervisor Review</div></div></div>
+          <div class="pipeline-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">7</div><div class="pn-label">Committee Review</div></div></div>
+          <div class="pipeline-arrow"></div>
+          <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">8</div><div class="pn-label">Final Submission</div></div></div>
+        </div>
+        <div class="card-footer">
+          <div style="display:flex;align-items:center;gap:1.5rem;font-size:0.78rem">
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>Completed (3)</span>
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--navy);display:inline-block"></span>Current (1)</span>
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--off2);border:1px solid var(--border);display:inline-block"></span>Upcoming (4)</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Stage 4 Details — Data Analysis & Writing</div></div></div>
+        <div class="card-body">
+          <div class="alert alert-warning" style="margin-bottom:1rem"><div class="alert-text"><strong>Action Required:</strong> Chapter 4 (Data Analysis) needs to be resubmitted with statistical revisions by April 30, 2026.</div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem">
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Status</div><div style="font-weight:700;color:var(--orange)">In Revision</div></div>
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Deadline</div><div style="font-weight:700;color:var(--navy)">Apr 30, 2026</div></div>
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Submissions</div><div style="font-weight:700;color:var(--navy)">2 (1 revision req.)</div></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Resubmit Chapter 4</button>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- REPORTS PAGE -->
+    <div class="page" id="page-reports">
+      <div class="section-head">
+        <div><div class="section-title">Academic Reports</div><div class="section-sub">Progress reports and performance summaries</div></div>
+        <button class="btn btn-primary btn-sm" onclick="alert('Generating PDF…')">📄 Download PDF</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card sc-green"><div class="stat-head"><div class="stat-label">GPA (Current)</div><div class="stat-icon si-green">🎓</div></div><div class="stat-value">3.9</div><div class="stat-meta">Out of 4.0</div></div>
+        <div class="stat-card sc-navy"><div class="stat-head"><div class="stat-label">Avg Score</div><div class="stat-icon si-navy">📊</div></div><div class="stat-value">86%</div><div class="stat-meta">Across all submissions</div></div>
+        <div class="stat-card sc-amber"><div class="stat-head"><div class="stat-label">Supervisor Rating</div><div class="stat-icon si-amber">⭐</div></div><div class="stat-value">4.8<span style="font-size:1rem;color:var(--muted)">/5</span></div><div class="stat-meta">Based on 4 reviews</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Report History</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Report</th><th>Period</th><th>Generated</th><th>GPA</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          <tr><td class="td-title">Q1 2026 Progress Report</td><td class="td-muted">Jan – Mar 2026</td><td class="td-muted">2026-03-15</td><td><span class="score-good">3.9</span></td><td><span class="pill pill-approved">Complete</span></td><td><a class="link-btn">Download</a></td></tr>
+          <tr><td class="td-title">Annual Progress Report 2025</td><td class="td-muted">Jan – Dec 2025</td><td class="td-muted">2026-01-10</td><td><span class="score-good">3.8</span></td><td><span class="pill pill-approved">Complete</span></td><td><a class="link-btn">Download</a></td></tr>
+          <tr><td class="td-title">6-Month Review Report</td><td class="td-muted">Jan – Jun 2024</td><td class="td-muted">2024-07-01</td><td><span class="score-ok">3.6</span></td><td><span class="pill pill-approved">Complete</span></td><td><a class="link-btn">Download</a></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+ 
+    <!-- SCHEDULE PAGE -->
+    <div class="page" id="page-schedule">
+      <div class="section-head">
+        <div><div class="section-title">Schedule</div><div class="section-sub">Upcoming meetings, deadlines and events</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openM('modal-meeting')">+ Request Meeting</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Upcoming Events</div></div>
+        <div class="task-item"><div class="task-dot td-high"></div><div class="task-body"><div class="task-title">Chapter 4 Resubmission Deadline</div><div class="task-meta">📅 April 30, 2026</div></div><span class="pill pill-high">Deadline</span></div>
+        <div class="task-item"><div class="task-dot td-med"></div><div class="task-body"><div class="task-title">Supervisor Meeting — Dr. Michael Chen</div><div class="task-meta">📅 Friday, March 22, 2026 · 10:00am</div></div><span class="pill pill-approved">Confirmed</span></div>
+        <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">Department Research Seminar</div><div class="task-meta">📅 Thursday, March 27, 2026 · 2:00pm · Room 204</div></div><span class="pill pill-draft">Optional</span></div>
+        <div class="task-item"><div class="task-dot td-med"></div><div class="task-body"><div class="task-title">Progress Review Committee Meeting</div><div class="task-meta">📅 May 5, 2026 · 11:00am</div></div><span class="pill pill-pending">Pending Confirmation</span></div>
+        <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">PhD Conference — Research Showcase</div><div class="task-meta">📅 June 14, 2026</div></div><span class="pill pill-low">Registered</span></div>
+      </div>
+    </div>
+ 
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="section-head">
+        <div><div class="section-title">Account Settings</div><div class="section-sub">Manage your profile and preferences</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+        <div>
+          <div class="card" style="margin-bottom:1.1rem">
+            <div class="card-header"><div class="card-title">Profile Information</div></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">SJ</div>
+                <div><div style="font-weight:700;color:var(--navy)">Sarah Johnson</div><div style="font-size:0.75rem;color:var(--muted)">PhD Computer Science · PG/2024/001</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="alert('Photo upload')">Change Photo</button></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" value="Sarah"/></div>
+                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" value="Johnson"/></div>
+              </div>
+              <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" value="s.johnson@university.edu"/></div>
+              <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="+254 700 123 456"/></div>
+              <div class="form-group"><label class="form-label">Student ID</label><input class="form-input" value="PG/2024/001" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <div class="form-group"><label class="form-label">Programme</label><input class="form-input" value="PhD Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <button class="btn btn-primary" onclick="alert('Profile updated successfully!')">Save Changes</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:1.1rem">
+            <div class="card-header"><div class="card-title">Password & Security</div></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <div class="form-group"><label class="form-label">Confirm New Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <button class="btn btn-primary" onclick="alert('Password changed successfully!')">Update Password</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Notification Preferences</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:0.75rem">
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Email notifications<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Feedback received<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Deadline reminders<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Meeting invites<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">System announcements<input type="checkbox" style="accent-color:var(--navy)"/></label>
+              <button class="btn btn-ghost" style="margin-top:0.5rem" onclick="alert('Preferences saved!')">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</main>
+ 
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-panel-header">
+    <div style="font-size:0.95rem;font-weight:700;color:var(--navy)">Notifications</div>
+    <button class="modal-close" onclick="toggleNotif()">✕</button>
+  </div>
+  <div class="notif-item unread"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Feedback received</strong> — Dr. Chen reviewed Chapter 3 Methodology</div><div class="notif-time">2 hours ago</div></div></div>
+  <div class="notif-item unread"><div class="ni-dot ni-red"></div><div><div class="notif-text"><strong>Revision required</strong> — Data Analysis Chapter needs resubmission</div><div class="notif-time">5 days ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-green"></div><div><div class="notif-text"><strong>Milestone completed</strong> — Data Collection Phase marked complete</div><div class="notif-time">1 day ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-amber"></div><div><div class="notif-text"><strong>Deadline reminder</strong> — Chapter 4 due in 3 days</div><div class="notif-time">2 days ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Meeting confirmed</strong> — Dr. Chen, Friday 10:00am</div><div class="notif-time">4 days ago</div></div></div>
+</div>
+ 
+<!-- MODAL: Submit Work -->
+<div class="modal-overlay" id="modal-submit" onclick="bgClose(event,'modal-submit')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⬆ Submit Work</div><button class="modal-close" onclick="closeM('modal-submit')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Submission Title</label><input class="form-input" placeholder="e.g. Chapter 4: Data Analysis — Revised"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-select"><option>Draft</option><option>Final</option><option>Proposal</option><option>Revision</option></select></div>
+        <div class="form-group"><label class="form-label">Chapter</label><select class="form-select"><option>Chapter 1</option><option>Chapter 2</option><option>Chapter 3</option><option selected>Chapter 4</option><option>Chapter 5</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes for Supervisor</label><textarea class="form-textarea" placeholder="Describe changes made, key points, or anything the supervisor should note…"></textarea></div>
+      <div class="form-group"><label class="form-label">Upload File</label><input class="form-input" type="file" style="padding:0.55rem 0.9rem"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-submit')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Submission successful! Supervisor has been notified.');closeM('modal-submit')">Submit →</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL: Meeting Request -->
+<div class="modal-overlay" id="modal-meeting" onclick="bgClose(event,'modal-meeting')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📅 Request Meeting</div><button class="modal-close" onclick="closeM('modal-meeting')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Meeting Purpose</label><input class="form-input" placeholder="e.g. Chapter 4 revision discussion"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Preferred Date</label><input class="form-input" type="date"/></div>
+        <div class="form-group"><label class="form-label">Preferred Time</label><input class="form-input" type="time" value="10:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-select"><option>In-Person</option><option>Video Call</option><option>Phone Call</option></select></div>
+      <div class="form-group"><label class="form-label">Additional Notes</label><textarea class="form-textarea" placeholder="Any specific topics or documents to review…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-meeting')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Meeting request sent to Dr. Michael Chen!');closeM('modal-meeting')">Send Request →</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+const pageData = {
+  dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview · Thursday, March 19, 2026"],
+  submissions:['My Submissions','All submitted work and current review status'],
+  milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
+  feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
+  pipeline:['Assessment Pipeline','Your progress through the 8-stage assessment process'],
+  reports:['Academic Reports','Progress reports and performance summaries'],
+  schedule:['Schedule','Upcoming meetings, deadlines and events'],
+  settings:['Account Settings','Manage your profile and preferences'],
+};
+function nav(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const t=pageData[id]||['Dashboard',''];
+  document.getElementById('tb-title').textContent=t[0];
+  document.getElementById('tb-sub').textContent=t[1];
+}
+function stab(tab,id){
+  const c=tab.closest('.card');
+  c.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  c.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function openM(id){document.getElementById(id).classList.add('open')}
+function closeM(id){document.getElementById(id).classList.remove('open')}
+function bgClose(e,id){if(e.target===e.currentTarget)closeM(id)}
+function toggleNotif(){document.getElementById('notif-panel').classList.toggle('open')}
+</script>
+</body>
+</html>

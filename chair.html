@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Department Chair — PAPMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0A194E;--navy-light:#1a3580;--amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;--white:#fff;--off:#F5F7FC;--off2:#EBEEf8;--text:#111827;--muted:#5B6F8A;--soft:#94A3B8;--border:#DDE4F0;--green:#16A34A;--green-dim:rgba(22,163,74,.1);--red:#DC2626;--red-dim:rgba(220,38,38,.1);--blue:#2563EB;--blue-dim:rgba(37,99,235,.1);--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);--sidebar:228px;--topbar:60px}
+html{font-size:14px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:.75rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{width:34px;height:34px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.logo-text{font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.04em}.logo-text span{color:var(--amber)}
+.nav-section{padding:.75rem 0}
+.nav-section-title{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:.4rem 1.25rem;display:block}
+.nav-link{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.25rem;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;border-left:2.5px solid transparent;text-decoration:none}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,.09);border-left-color:var(--amber)}
+.nav-link .ni{width:17px;text-align:center;font-size:.88rem;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .38rem;border-radius:20px}
+.sidebar-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{display:flex;align-items:center;gap:.65rem}
+.user-av{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+.user-mini-name{font-size:.78rem;font-weight:700;color:#fff;line-height:1.2}
+.user-mini-role{font-size:.65rem;color:rgba(255,255,255,.38)}
+.logout-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.28);font-size:.9rem;cursor:pointer;padding:.25rem}
+.logout-btn:hover{color:var(--red)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0 1.75rem;position:sticky;top:0;z-index:50}
+.topbar-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+.tb-notif{position:relative;width:34px;height:34px;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+.tb-pill{display:flex;align-items:center;gap:.5rem;background:var(--off);border:1px solid var(--border);padding:.3rem .75rem;cursor:pointer}
+.tb-av{width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800}
+.tb-name{font-size:.78rem;font-weight:600}
+.tb-role{font-size:.62rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy-light)}
+.btn-amber{background:var(--amber);color:var(--navy)}.btn-amber:hover{background:#e6ad00}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--navy);background:rgba(10,25,78,.04)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.65rem}
+.content{padding:1.5rem 1.75rem;flex:1}
+.section-view{display:none}
+.section-view.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-hdr h2{font-family:'Lora',serif;font-size:1.45rem;font-weight:700;color:var(--navy)}
+.page-hdr p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.page-hdr-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--border);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:3.5px}
+.s-navy::after{background:var(--navy)}.s-green::after{background:var(--green)}.s-amber::after{background:var(--amber)}.s-red::after{background:var(--red)}.s-blue::after{background:var(--blue)}
+.stat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem}
+.stat-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.ico-navy{background:rgba(10,25,78,.08)}.ico-green{background:var(--green-dim)}.ico-amber{background:var(--amber-dim)}.ico-red{background:var(--red-dim)}.ico-blue{background:var(--blue-dim)}
+.stat-val{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.25rem}
+.stat-sub{font-size:.7rem;color:var(--muted)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+.card{background:#fff;border:1px solid var(--border)}
+.card-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.card-hdr-left{flex:1}
+.card-title{font-size:.9rem;font-weight:700;color:var(--navy)}
+.card-sub{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.card-body{padding:1.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-65-35{display:grid;grid-template-columns:1.85fr 1fr;gap:1rem}
+.grid-55-45{display:grid;grid-template-columns:1.2fr 1fr;gap:1rem}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:.65rem 1.1rem;font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;background:var(--off);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:.8rem 1.1rem;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover td{background:rgba(10,25,78,.018)}
+tbody tr:last-child td{border-bottom:none}
+.td-bold{font-weight:600}.td-muted{color:var(--muted)}
+.prog-wrap{display:flex;align-items:center;gap:.6rem}
+.prog-bar{height:6px;background:var(--off2);flex:1;overflow:hidden;min-width:60px}
+.prog-fill{height:100%}
+.prog-val{font-size:.72rem;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.63rem;font-weight:700;padding:.2rem .55rem}
+.pill-green{background:var(--green-dim);color:var(--green)}.pill-red{background:var(--red-dim);color:var(--red)}.pill-amber{background:var(--amber-dim);color:var(--amber-dark)}.pill-blue{background:var(--blue-dim);color:var(--blue)}.pill-orange{background:var(--orange-dim);color:var(--orange)}.pill-navy{background:rgba(10,25,78,.1);color:var(--navy)}.pill-gray{background:var(--off2);color:var(--muted)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
+.stars{color:var(--amber);letter-spacing:.05em;font-size:.78rem}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab-btn{padding:.7rem 1.1rem;font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,48,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.form-control{width:100%;background:var(--off);border:1.5px solid var(--border);padding:.65rem .9rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--navy);background:#fff}
+textarea.form-control{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+/* Alert cards */
+.alert-card{border:1px solid var(--border);padding:1rem;display:flex;gap:.85rem;align-items:flex-start;transition:background .2s;cursor:pointer;margin-bottom:.65rem}
+.alert-card:hover{background:var(--off)}
+.alert-card:last-child{margin-bottom:0}
+.alert-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.alert-title{font-size:.83rem;font-weight:700;color:var(--navy);margin-bottom:.18rem}
+.alert-desc{font-size:.73rem;color:var(--muted)}
+.alert-action{font-size:.7rem;font-weight:700;margin-top:.35rem}
+.alert-action-red{color:var(--red)}
+.alert-action-amber{color:var(--amber-dark)}
+.alert-action-blue{color:var(--blue)}
+.alert-action-green{color:var(--green)}
+/* Prog stat row */
+.prog-stat{display:flex;align-items:center;gap:1rem;padding:.9rem 1.25rem;border-bottom:1px solid var(--border)}
+.prog-stat:last-child{border-bottom:none}
+.ps-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.ps-name{font-size:.85rem;font-weight:700;color:var(--navy)}
+.ps-meta{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+/* Bar chart horizontal */
+.hbar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.hbar-label{width:110px;font-size:.74rem;color:var(--muted);text-align:right;flex-shrink:0}
+.hbar-track{flex:1;height:9px;background:var(--off2);overflow:hidden}
+.hbar-fill{height:100%}
+.hbar-val{font-size:.7rem;font-weight:700;color:var(--text);width:32px}
+/* SVG chart inline */
+svg.chart{overflow:visible;width:100%}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--off2);border-radius:10px}
+</style>
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark">🎓</div><div class="logo-text">PAP<span>MS</span></div></div>
+  <nav class="nav-section">
+    <span class="nav-section-title">Main</span>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">👥</span> Faculty & Students</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
+    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">📈</span> Analytics</a>
+    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">✅</span> Approvals <span class="nav-badge">8</span></a>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
+  </nav>
+  <nav class="nav-section">
+    <span class="nav-section-title">Navigate</span>
+    <a class="nav-link" href="login.html"><span class="ni">🏠</span> Back to Portal</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-av">ER</div>
+      <div><div class="user-mini-name">Prof. Emily Rodriguez</div><div class="user-mini-role">Department Chair</div></div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⏻</button>
+    </div>
+  </div>
+</aside>
+ 
+<div class="main">
+  <header class="topbar">
+    <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Department Chair Dashboard</div>
+    <div class="topbar-right">
+      <div class="tb-notif" onclick="showToast('5 new alerts')">🔔<span class="tb-notif-dot"></span></div>
+      <div class="tb-pill"><div class="tb-av">ER</div><div><div class="tb-name">Prof. Emily Rodriguez</div><div class="tb-role">Chair</div></div></div>
+      <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+    </div>
+  </header>
+ 
+  <main class="content">
+ 
+    <!-- DASHBOARD -->
+    <section class="section-view active" id="view-dashboard">
+      <div class="page-hdr">
+        <div><h2>Department Chair Dashboard 📊</h2><p>Computer Science Department — Q1 2026 Overview</p></div>
+        <div class="page-hdr-actions">
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">📊 Reports</button>
+          <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+        </div>
+      </div>
+ 
+      <div class="stat-grid">
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Total Students</span><div class="stat-ico ico-amber">🎓</div></div><div class="stat-val">60</div><div class="stat-sub">20 PhD · 40 Masters</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">👥</div></div><div class="stat-val">12</div><div class="stat-sub">8 Full-time · 4 Part-time</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-navy">📈</div></div><div class="stat-val">87%</div><div class="stat-sub"><span class="up">↑ 1.5%</span> from last year</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">5</div><div class="stat-sub"><span class="dn">2 urgent cases</span></div></div>
+      </div>
+ 
+      <!-- Charts -->
+      <div class="grid-2" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Department Performance Trends</div><div class="card-sub">Enrollment and completions over time (Jan–Jun 2026)</div></div></div>
+          <div style="padding:1.25rem 1.25rem .5rem">
+            <svg class="chart" viewBox="0 0 380 130" style="height:135px">
+              <defs>
+                <linearGradient id="cg1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0A194E" stop-opacity=".18"/>
+                  <stop offset="100%" stop-color="#0A194E" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="cg2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#16A34A" stop-opacity=".22"/>
+                  <stop offset="100%" stop-color="#16A34A" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line x1="35" y1="10" x2="375" y2="10" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="37" x2="375" y2="37" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="64" x2="375" y2="64" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="91" x2="375" y2="91" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="118" x2="375" y2="118" stroke="#DDE4F0" stroke-width="1"/>
+              <text x="28" y="13" font-size="8.5" fill="#94A3B8" text-anchor="end">60</text>
+              <text x="28" y="67" font-size="8.5" fill="#94A3B8" text-anchor="end">30</text>
+              <text x="28" y="121" font-size="8.5" fill="#94A3B8" text-anchor="end">0</text>
+              <!-- Active students area -->
+              <path d="M50,80 L110,68 L175,52 L240,40 L305,28 L365,18 L365,118 L50,118Z" fill="url(#cg1)"/>
+              <polyline points="50,80 110,68 175,52 240,40 305,28 365,18" fill="none" stroke="#0A194E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Completions area -->
+              <path d="M50,108 L110,105 L175,101 L240,97 L305,93 L365,88 L365,118 L50,118Z" fill="url(#cg2)"/>
+              <polyline points="50,108 110,105 175,101 240,97 305,93 365,88" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,2.5"/>
+              <!-- Dots navy -->
+              <circle cx="50" cy="80" r="3.5" fill="#0A194E"/><circle cx="110" cy="68" r="3.5" fill="#0A194E"/><circle cx="175" cy="52" r="3.5" fill="#0A194E"/><circle cx="240" cy="40" r="3.5" fill="#0A194E"/><circle cx="305" cy="28" r="3.5" fill="#FFC107" stroke="#0A194E" stroke-width="1.5"/><circle cx="365" cy="18" r="4" fill="#FFC107" stroke="#0A194E" stroke-width="2"/>
+              <text x="50" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">Jan</text>
+              <text x="110" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">Feb</text>
+              <text x="175" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">Mar</text>
+              <text x="240" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">Apr</text>
+              <text x="305" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">May</text>
+              <text x="365" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle">Jun</text>
+            </svg>
+          </div>
+          <div style="display:flex;gap:1.25rem;padding:0 1.25rem .9rem;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:16px;height:2.5px;background:var(--navy);border-radius:1px"></div>Active Students</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:16px;height:2px;border-top:2px dashed var(--green)"></div>Completions</div>
+          </div>
+        </div>
+ 
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Supervisor Workload Distribution</div><div class="card-sub">Students per supervisor (recommended max: 12)</div></div></div>
+          <div style="padding:1.25rem">
+            <div class="hbar-row"><span class="hbar-label">Dr. M. Chen</span><div class="hbar-track"><div class="hbar-fill" style="width:125%;max-width:100%;background:var(--red)"></div></div><span class="hbar-val" style="color:var(--red)">15 ⚠</span></div>
+            <div class="hbar-row"><span class="hbar-label">Dr. S. Smith</span><div class="hbar-track"><div class="hbar-fill" style="width:100%;background:var(--navy)"></div></div><span class="hbar-val">12</span></div>
+            <div class="hbar-row"><span class="hbar-label">Dr. J. Williams</span><div class="hbar-track"><div class="hbar-fill" style="width:83%;background:var(--navy)"></div></div><span class="hbar-val">10</span></div>
+            <div class="hbar-row"><span class="hbar-label">Dr. L. Johnson</span><div class="hbar-track"><div class="hbar-fill" style="width:67%;background:var(--green)"></div></div><span class="hbar-val">8</span></div>
+            <div class="hbar-row"><span class="hbar-label">Dr. R. Davis</span><div class="hbar-track"><div class="hbar-fill" style="width:75%;background:var(--navy)"></div></div><span class="hbar-val">9</span></div>
+            <div class="hbar-row"><span class="hbar-label">Dr. P. Moore</span><div class="hbar-track"><div class="hbar-fill" style="width:50%;background:var(--green)"></div></div><span class="hbar-val">6</span></div>
+          </div>
+          <div style="padding:0 1.25rem .9rem;font-size:.72rem;color:var(--muted)">⚠️ Dr. Chen exceeds maximum — recommend redistribution of 3 students</div>
+        </div>
+      </div>
+ 
+      <!-- Supervisor performance + Priority Alerts -->
+      <div class="grid-65-35" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Faculty Supervisor Performance</div><div class="card-sub">Ratings and student outcomes by supervisor</div></div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Supervisor</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Submissions Reviewed</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><span class="td-bold">Dr. Michael Chen</span></div></td><td>15</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.8/5.0</div></div></td><td class="td-muted">25</td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><span class="td-bold">Dr. Sarah Smith</span></div></td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.5/5.0</div></div></td><td class="td-muted">18</td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">Dr. John Williams</span></div></td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.7/5.0</div></div></td><td class="td-muted">22</td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><span class="td-bold">Dr. Lisa Johnson</span></div></td><td>8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.3/5.0</div></div></td><td class="td-muted">14</td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#EA580C;color:#fff">RD</div><span class="td-bold">Dr. Robert Davis</span></div></td><td>9</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:58%;background:var(--orange)"></div></div><span class="prog-val" style="color:var(--orange)">58%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.0/5.0</div></div></td><td class="td-muted">12</td><td><span class="pill pill-orange">Fair</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-hdr"><div class="card-title">Priority Alerts</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Issues needing immediate attention</div></div>
+            <div style="padding:.85rem 1.25rem">
+              <div class="alert-card"><div class="alert-ico" style="background:var(--red-dim)">⚠️</div><div><div class="alert-title">Student Progress Review</div><div class="alert-desc">3 students below 50% progress threshold in PhD CS</div><div class="alert-action alert-action-red">Review Now →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--amber-dim)">👥</div><div><div class="alert-title">Supervisor Overload</div><div class="alert-desc">Dr. Chen has 15 students — max is 12</div><div class="alert-action alert-action-amber">Rebalance Load →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--blue-dim)">⏰</div><div><div class="alert-title">8 Pending Approvals</div><div class="alert-desc">Thesis proposals awaiting chair sign-off</div><div class="alert-action alert-action-blue" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">View All →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--green-dim)">🎉</div><div><div class="alert-title">Recent Completions</div><div class="alert-desc">5 students completed their programme this month</div><div class="alert-action alert-action-green">View Details →</div></div></div>
+            </div>
+          </div>
+ 
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
+            <div style="padding:.75rem;display:flex;flex-direction:column;gap:.5rem">
+              <button class="btn btn-amber" style="justify-content:center" onclick="showToast('Report generated')">📄 Generate Department Report</button>
+              <button class="btn btn-navy" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[1],'faculty')">👥 Manage Faculty Assignments</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')">📈 View Analytics Dashboard</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">✅ Approve Pending Requests</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Program stats -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type — CS Department</div></div></div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:rgba(10,25,78,.08)">🎓</div>
+          <div style="flex:1"><div class="ps-name">PhD Computer Science</div><div class="ps-meta">Avg. Duration: 4.2 years · 20 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></div></div>
+          <span class="pill pill-navy">20 Students</span>
+        </div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:var(--green-dim)">📚</div>
+          <div style="flex:1"><div class="ps-name">Masters Computer Science</div><div class="ps-meta">Avg. Duration: 2.1 years · 30 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div></div></div>
+          <span class="pill pill-navy">30 Students</span>
+        </div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:var(--amber-dim)">💻</div>
+          <div style="flex:1"><div class="ps-name">Masters Data Science</div><div class="ps-meta">Avg. Duration: 2.0 years · 10 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div></div></div>
+          <span class="pill pill-navy">10 Students</span>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- FACULTY & STUDENTS -->
+    <section class="section-view" id="view-faculty">
+      <div class="page-hdr"><div><h2>Faculty & Students</h2><p>Complete directory for Computer Science Department</p></div></div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="tabs" id="fac-tabs">
+          <button class="tab-btn active" onclick="switchTab('fac-tabs','ft-supervisors',this)">Supervisors (12)</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-students',this)">All Students (60)</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-at-risk',this)">At Risk (5)</button>
+        </div>
+        <div id="ft-supervisors" class="tab-panel active tbl-wrap">
+          <table>
+            <thead><tr><th>Supervisor</th><th>Role</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><div><div class="td-bold">Dr. Michael Chen</div><div class="td-muted" style="font-size:.67rem">m.chen@uni.edu</div></div></div></td><td>Senior Supervisor</td><td style="color:var(--red);font-weight:700">15 ⚠</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><div><div class="td-bold">Dr. Sarah Smith</div><div class="td-muted" style="font-size:.67rem">s.smith@uni.edu</div></div></div></td><td>Supervisor</td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">Dr. John Williams</div><div class="td-muted" style="font-size:.67rem">j.williams@uni.edu</div></div></div></td><td>Supervisor</td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><div><div class="td-bold">Dr. Lisa Johnson</div><div class="td-muted" style="font-size:.67rem">l.johnson@uni.edu</div></div></div></td><td>Part-time Supervisor</td><td style="color:var(--green);font-weight:700">8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★☆</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="ft-students" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Supervisor</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><span class="td-bold">Sarah Johnson</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">James Wilson</span></div></td><td>MSc CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><span class="td-bold">Emily Brown</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Needs Attention</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="ft-at-risk" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Progress</th><th>Risk Factor</th><th>Supervisor</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Emily Brown</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Delayed — 3 months behind</span></td><td class="td-muted">Dr. Chen</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+              <tr><td class="td-bold">Alex Turner</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">38%</span></div></td><td><span class="pill pill-red">No submission in 6 weeks</span></td><td class="td-muted">Dr. Davis</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- REPORTS -->
+    <section class="section-view" id="view-reports">
+      <div class="page-hdr"><div><h2>Reports</h2><p>Department performance reports and summaries</p></div><button class="btn btn-amber" onclick="showToast('New report generated')">+ Generate Report</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">24</div><div class="stat-sub">This academic year</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">87%</div><div class="stat-sub"><span class="up">↑ 1.5%</span> YoY</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">81%</div><div class="stat-sub">department average</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span> last year</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Report Archive</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Report Title</th><th>Type</th><th>Generated</th><th>Scope</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Q1 2026 Department Performance</td><td class="td-muted">Quarterly</td><td class="td-muted">15 Mar 2026</td><td>All programmes</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Annual Completion Analysis 2025</td><td class="td-muted">Annual</td><td class="td-muted">10 Jan 2026</td><td>CS Dept</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Supervisor Load Distribution — Mar</td><td class="td-muted">Monthly</td><td class="td-muted">01 Mar 2026</td><td>Supervisors</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">At-Risk Student Intervention Report</td><td class="td-muted">Ad hoc</td><td class="td-muted">20 Feb 2026</td><td>PhD students</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ANALYTICS -->
+    <section class="section-view" id="view-analytics">
+      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics — Computer Science</p></div></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">85%</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">92%</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Time to Complete</span><div class="stat-ico ico-amber">⏱️</div></div><div class="stat-val">2.8y</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Progress by Programme</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">PhD CS</span><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--navy)"></div></div><span class="prog-val">85%</span></div>
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc CS</span><div class="prog-bar"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div>
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc Data Science</span><div class="prog-bar"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Supervisor Performance Avg</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Student Satisfaction</span><div class="prog-bar"><div class="prog-fill" style="width:91%;background:var(--amber)"></div></div><span class="prog-val">4.5</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Review Timeliness</span><div class="prog-bar"><div class="prog-fill" style="width:78%;background:var(--navy)"></div></div><span class="prog-val">78%</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Approval Rate</span><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--green)"></div></div><span class="prog-val">82%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- APPROVALS -->
+    <section class="section-view" id="view-approvals">
+      <div class="page-hdr"><div><h2>Pending Approvals</h2><p>Thesis proposals and other requests awaiting your sign-off</p></div></div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Request Type</th><th>Details</th><th>Submitted</th><th>Priority</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Thesis Proposal</td><td class="td-muted">PhD CS — Data Analysis Chapter approval</td><td class="td-muted">16 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Supervisor Change</td><td class="td-muted">Request to change from Dr. Chen to Dr. Smith</td><td class="td-muted">15 Mar</td><td><span class="pill pill-amber">Medium</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Extension Request</td><td class="td-muted">3-month extension on PhD submission deadline</td><td class="td-muted">14 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Thesis Proposal</td><td class="td-muted">MSc Data Science — Research Proposal sign-off</td><td class="td-muted">13 Mar</td><td><span class="pill pill-blue">Low</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- SETTINGS -->
+    <section class="section-view" id="view-settings">
+      <div class="page-hdr"><div><h2>Settings</h2><p>Manage your profile and department preferences</p></div></div>
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Profile Information</div></div>
+          <div class="card-body">
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Prof. Emily Rodriguez"/></div><div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="e.rodriguez@uni.edu"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="CHR/2015/001" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div></div>
+            <div class="form-group"><label class="form-label">Office</label><input class="form-control" value="Office 310, Science Block"/></div>
+            <button class="btn btn-navy" onclick="showToast('Profile saved')">Save Changes</button>
+          </div>
+        </div>
+        <div class="card" style="align-self:start">
+          <div class="card-hdr"><div class="card-title">Preferences</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:.65rem">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Alert emails</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Weekly digest</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Approval reminders</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Faculty announcements</span><input type="checkbox"/></label>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- MODALS -->
+<div class="modal-overlay" id="assign-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Reassign Students</div><button class="modal-close" onclick="closeModal('assign-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">From Supervisor</label><select class="form-control"><option>Dr. Michael Chen (15 students)</option></select></div>
+      <div class="form-group"><label class="form-label">To Supervisor</label><select class="form-control"><option>Dr. Lisa Johnson (8 students — capacity available)</option><option>Dr. John Williams (10 students)</option></select></div>
+      <div class="form-group"><label class="form-label">Students to Reassign</label>
+        <div style="border:1px solid var(--border);padding:.5rem">
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox" checked/> Emily Brown — PhD CS</label>
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> James Wilson — MSc CS</label>
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> Maria Garcia — MSc CS</label>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Reason for Reassignment</label><textarea class="form-control" placeholder="e.g., Workload balancing…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('assign-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('assign-modal');showToast('Students reassigned successfully')">Confirm Reassignment</button></div>
+  </div>
+</div>
+ 
+<div class="modal-overlay" id="intervention-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Student Intervention — Emily Brown</div><button class="modal-close" onclick="closeModal('intervention-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--red-dim);border:1px solid rgba(220,38,38,.2);padding:1rem;margin-bottom:1rem"><div style="font-weight:700;color:var(--red);margin-bottom:.3rem">⚠ At-Risk Alert</div><div style="font-size:.8rem;color:var(--text)">Emily Brown is 3 months behind schedule with 45% progress. Immediate intervention recommended.</div></div>
+      <div class="form-group"><label class="form-label">Intervention Type</label><select class="form-control"><option>Academic Support Plan</option><option>Supervisor Meeting Required</option><option>Extension Granted</option><option>Academic Probation Notice</option></select></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" placeholder="Document the intervention plan…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('intervention-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('intervention-modal');showToast('Intervention recorded')">Record Intervention</button></div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+function nav(el,id){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const v=document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  const titles={dashboard:'Department Chair Dashboard',faculty:'Faculty & Students',reports:'Reports',analytics:'Analytics',approvals:'Pending Approvals',settings:'Settings'};
+  document.getElementById('topbar-title').textContent=titles[id]||'Dashboard';
+}
+function switchTab(gId,pId,btn){
+  const g=document.getElementById(gId);
+  g.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  g.parentElement.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pId).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
+  link.addEventListener('click',function(){
+    document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

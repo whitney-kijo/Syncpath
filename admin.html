@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>System Administration — PAPMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0A194E;--navy-light:#1a3580;--amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;--white:#fff;--off:#F5F7FC;--off2:#EBEEf8;--text:#111827;--muted:#5B6F8A;--soft:#94A3B8;--border:#DDE4F0;--green:#16A34A;--green-dim:rgba(22,163,74,.1);--red:#DC2626;--red-dim:rgba(220,38,38,.1);--blue:#2563EB;--blue-dim:rgba(37,99,235,.1);--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);--sidebar:228px;--topbar:60px}
+html{font-size:14px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:.75rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{width:34px;height:34px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.logo-text{font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.04em}.logo-text span{color:var(--amber)}
+.nav-section{padding:.75rem 0}
+.nav-section-title{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:.4rem 1.25rem;display:block}
+.nav-link{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.25rem;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;border-left:2.5px solid transparent;text-decoration:none}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,.09);border-left-color:var(--amber)}
+.nav-link .ni{width:17px;text-align:center;font-size:.88rem;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .38rem;border-radius:20px}
+.nav-badge.warn{background:var(--amber);color:var(--navy)}
+.sidebar-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{display:flex;align-items:center;gap:.65rem}
+.user-av{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+.user-mini-name{font-size:.78rem;font-weight:700;color:#fff}
+.user-mini-role{font-size:.65rem;color:rgba(255,255,255,.38)}
+.logout-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.28);font-size:.9rem;cursor:pointer;padding:.25rem}
+.logout-btn:hover{color:var(--red)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+.topbar{height:var(--topbar);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0 1.75rem;position:sticky;top:0;z-index:50}
+.topbar-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+.tb-notif{position:relative;width:34px;height:34px;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+.tb-pill{display:flex;align-items:center;gap:.5rem;background:var(--off);border:1px solid var(--border);padding:.3rem .75rem;cursor:pointer}
+.tb-av{width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800}
+.tb-name{font-size:.78rem;font-weight:600}
+.tb-role{font-size:.62rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy-light)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#15803d}
+.btn-amber{background:var(--amber);color:var(--navy)}.btn-amber:hover{background:#e6ad00}
+.btn-red{background:var(--red);color:#fff}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--navy);background:rgba(10,25,78,.04)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.65rem}
+.content{padding:1.5rem 1.75rem;flex:1}
+.section-view{display:none}
+.section-view.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-hdr h2{font-family:'Lora',serif;font-size:1.45rem;font-weight:700;color:var(--navy)}
+.page-hdr p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.page-hdr-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--border);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:3.5px}
+.s-navy::after{background:var(--navy)}.s-green::after{background:var(--green)}.s-amber::after{background:var(--amber)}.s-red::after{background:var(--red)}.s-blue::after{background:var(--blue)}
+.stat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem}
+.stat-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.ico-navy{background:rgba(10,25,78,.08)}.ico-green{background:var(--green-dim)}.ico-amber{background:var(--amber-dim)}.ico-red{background:var(--red-dim)}.ico-blue{background:var(--blue-dim)}
+.stat-val{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.25rem}
+.stat-sub{font-size:.7rem;color:var(--muted)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+.card{background:#fff;border:1px solid var(--border)}
+.card-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.card-hdr-left{flex:1}
+.card-title{font-size:.9rem;font-weight:700;color:var(--navy)}
+.card-sub{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.card-body{padding:1.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-65-35{display:grid;grid-template-columns:1.85fr 1fr;gap:1rem}
+.grid-60-40{display:grid;grid-template-columns:3fr 2fr;gap:1rem}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:.65rem 1.1rem;font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;background:var(--off);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:.8rem 1.1rem;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover td{background:rgba(10,25,78,.018)}
+tbody tr:last-child td{border-bottom:none}
+.td-bold{font-weight:600}.td-muted{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.63rem;font-weight:700;padding:.2rem .55rem}
+.pill-green{background:var(--green-dim);color:var(--green)}.pill-red{background:var(--red-dim);color:var(--red)}.pill-amber{background:var(--amber-dim);color:var(--amber-dark)}.pill-blue{background:var(--blue-dim);color:var(--blue)}.pill-orange{background:var(--orange-dim);color:var(--orange)}.pill-navy{background:rgba(10,25,78,.1);color:var(--navy)}.pill-gray{background:var(--off2);color:var(--muted)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab-btn{padding:.7rem 1.1rem;font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,48,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.form-control{width:100%;background:var(--off);border:1.5px solid var(--border);padding:.65rem .9rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--navy);background:#fff}
+.form-control::placeholder{color:var(--soft)}
+textarea.form-control{resize:vertical;min-height:80px}
+select.form-control{appearance:none;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+/* Status dot */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sd-green{background:var(--green)}.sd-amber{background:var(--amber)}.sd-red{background:var(--red)}.sd-blue{background:var(--blue)}
+/* System status items */
+.sys-item{display:flex;align-items:center;gap:.85rem;padding:.85rem 1.25rem;border-bottom:1px solid var(--border)}
+.sys-item:last-child{border-bottom:none}
+.sys-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.sys-name{font-size:.83rem;font-weight:700;flex:1}
+.sys-detail{font-size:.7rem;color:var(--muted)}
+/* Alert items */
+.alert-item{display:flex;align-items:flex-start;gap:.65rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--border)}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:.3rem}
+.alert-text{font-size:.8rem;color:var(--text);font-weight:500}
+.alert-time{font-size:.65rem;color:var(--soft);margin-top:.1rem}
+/* Approval item */
+.approval-item{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);transition:background .2s}
+.approval-item:hover{background:var(--off)}
+.approval-item:last-child{border-bottom:none}
+.approval-info{flex:1}
+.approval-title{font-size:.83rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.approval-meta{font-size:.7rem;color:var(--muted);margin-top:.18rem}
+.approval-date{font-size:.65rem;color:var(--soft);margin-top:.1rem}
+/* Quick action buttons */
+.qa-row{display:flex;flex-direction:column;gap:.5rem;padding:.85rem}
+.qa-btn{display:flex;align-items:center;gap:.75rem;padding:.65rem .85rem;background:var(--off);border:1.5px solid var(--border);color:var(--text);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:left}
+.qa-btn:hover{background:rgba(10,25,78,.05);border-color:var(--navy);color:var(--navy)}
+.qa-btn.navy{background:var(--navy);color:#fff;border-color:var(--navy)}
+.qa-btn.navy:hover{background:var(--navy-light)}
+/* Sysinfo */
+.sysinfo{padding:1rem 1.25rem}
+.sysinfo-row{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.sysinfo-row:last-child{border-bottom:none}
+.sysinfo-key{color:var(--muted)}
+.sysinfo-val{font-weight:700;color:var(--text)}
+/* Usage bar */
+.usage-bar{height:6px;background:var(--off2);overflow:hidden;margin-top:.25rem}
+.usage-fill{height:100%}
+svg.chart{overflow:visible;width:100%}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--off2);border-radius:10px}
+</style>
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark">🎓</div><div class="logo-text">PAP<span>MS</span></div></div>
+  <nav class="nav-section">
+    <span class="nav-section-title">Administration</span>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'users')"><span class="ni">👥</span> User Management</a>
+    <a class="nav-link" onclick="nav(this,'data')"><span class="ni">🗄️</span> Data Management</a>
+    <a class="nav-link" onclick="nav(this,'security')"><span class="ni">🔒</span> Security</a>
+    <a class="nav-link" onclick="nav(this,'system')"><span class="ni">⚙️</span> System Settings</a>
+    <a class="nav-link" onclick="nav(this,'logs')"><span class="ni">📋</span> Audit Logs</a>
+  </nav>
+  <nav class="nav-section">
+    <span class="nav-section-title">Navigate</span>
+    <a class="nav-link" href="login.html"><span class="ni">🏠</span> Back to Portal</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-av">AU</div>
+      <div><div class="user-mini-name">Admin User</div><div class="user-mini-role">System Administrator</div></div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⏻</button>
+    </div>
+  </div>
+</aside>
+ 
+<div class="main">
+  <header class="topbar">
+    <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">System Administration</div>
+    <div class="topbar-right">
+      <div class="tb-notif" onclick="showToast('3 system alerts pending')">🔔<span class="tb-notif-dot"></span></div>
+      <div class="tb-pill"><div class="tb-av">AU</div><div><div class="tb-name">Admin User</div><div class="tb-role">System Admin</div></div></div>
+      <button class="btn btn-navy" onclick="openModal('add-user-modal')">+ Add User</button>
+    </div>
+  </header>
+ 
+  <main class="content">
+ 
+    <!-- DASHBOARD -->
+    <section class="section-view active" id="view-dashboard">
+      <div class="page-hdr">
+        <div><h2>System Administration ⚙️</h2><p>Manage users, monitor system health, and configure settings</p></div>
+        <div class="page-hdr-actions">
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[3],'security')">🔒 Security</button>
+          <button class="btn btn-navy" onclick="openModal('add-user-modal')">+ Add User</button>
+        </div>
+      </div>
+ 
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Total Users</span><div class="stat-ico ico-navy">👥</div></div><div class="stat-val">523</div><div class="stat-sub"><span class="up">↑ 12 new</span> this week</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Sessions</span><div class="stat-ico ico-green">⚡</div></div><div class="stat-val">187</div><div class="stat-sub" style="color:var(--green)">System running smoothly</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">System Health</span><div class="stat-ico ico-amber">💛</div></div><div class="stat-val">98.5%</div><div class="stat-sub">Uptime this month</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Pending Requests</span><div class="stat-ico ico-red">⏰</div></div><div class="stat-val">15</div><div class="stat-sub"><span class="dn">5 urgent approvals</span></div></div>
+      </div>
+ 
+      <!-- Activity chart (full-width) -->
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">System Activity Overview</div><div class="card-sub">User logins, submissions, and reviews — past 7 days</div></div></div>
+        <div style="padding:1.25rem 1.25rem .5rem">
+          <svg class="chart" viewBox="0 0 740 140" style="height:145px">
+            <defs>
+              <linearGradient id="ag1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0A194E" stop-opacity=".18"/>
+                <stop offset="100%" stop-color="#0A194E" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <line x1="50" y1="10" x2="725" y2="10" stroke="#DDE4F0" stroke-width="1"/>
+            <line x1="50" y1="37" x2="725" y2="37" stroke="#DDE4F0" stroke-width="1"/>
+            <line x1="50" y1="64" x2="725" y2="64" stroke="#DDE4F0" stroke-width="1"/>
+            <line x1="50" y1="91" x2="725" y2="91" stroke="#DDE4F0" stroke-width="1"/>
+            <line x1="50" y1="118" x2="725" y2="118" stroke="#DDE4F0" stroke-width="1"/>
+            <text x="40" y="14" font-size="8.5" fill="#94A3B8" text-anchor="end">200</text>
+            <text x="40" y="68" font-size="8.5" fill="#94A3B8" text-anchor="end">100</text>
+            <text x="40" y="122" font-size="8.5" fill="#94A3B8" text-anchor="end">0</text>
+            <!-- Logins area -->
+            <path d="M62,80 L163,58 L264,44 L365,32 L466,20 L567,16 L668,68 L720,90 L720,118 L62,118Z" fill="url(#ag1)"/>
+            <polyline points="62,80 163,58 264,44 365,32 466,20 567,16 668,68 720,90" fill="none" stroke="#0A194E" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Submissions line -->
+            <polyline points="62,112 163,106 264,102 365,95 466,88 567,82 668,105 720,114" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5,3"/>
+            <!-- Reviews line -->
+            <polyline points="62,116 163,113 264,110 365,107 466,104 567,100 668,112 720,116" fill="none" stroke="#FFC107" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3,2"/>
+            <!-- X labels -->
+            <text x="62" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Mon</text>
+            <text x="163" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Tue</text>
+            <text x="264" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Wed</text>
+            <text x="365" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Thu</text>
+            <text x="466" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Fri</text>
+            <text x="567" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Sat</text>
+            <text x="668" y="135" font-size="8.5" fill="#94A3B8" text-anchor="middle">Sun</text>
+          </svg>
+        </div>
+        <div style="display:flex;gap:1.5rem;padding:0 1.25rem .9rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:16px;height:2.5px;background:var(--navy);border-radius:1px"></div>User Logins</div>
+          <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:16px;height:2px;border-top:2px dashed var(--green)"></div>Submissions</div>
+          <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:16px;height:2px;border-top:2px dashed var(--amber)"></div>Reviews</div>
+        </div>
+      </div>
+ 
+      <!-- User management + System Status -->
+      <div class="grid-65-35" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-hdr-left"><div class="card-title">User Management</div><div class="card-sub">Recently registered and active users</div></div>
+            <button class="btn btn-navy btn-sm" onclick="openModal('add-user-modal')">+ Add User</button>
+          </div>
+          <div class="tabs" id="usr-tabs">
+            <button class="tab-btn active" onclick="switchTab('usr-tabs','ut-recent',this)">Recent Users</button>
+            <button class="tab-btn" onclick="switchTab('usr-tabs','ut-active',this)">Most Active</button>
+            <button class="tab-btn" onclick="switchTab('usr-tabs','ut-inactive',this)">Inactive</button>
+          </div>
+          <div id="ut-recent" class="tab-panel active tbl-wrap">
+            <table>
+              <thead><tr><th>User</th><th>Role</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">JA</div><div><div class="td-bold">John Anderson</div><div class="td-muted" style="font-size:.67rem">j.anderson@uni.edu</div></div></div></td><td class="td-muted">Student</td><td class="td-muted">2026-03-17</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">PM</div><div><div class="td-bold">Dr. Patricia Moore</div><div class="td-muted" style="font-size:.67rem">p.moore@uni.edu</div></div></div></td><td class="td-muted">Supervisor</td><td class="td-muted">2026-03-16</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">RG</div><div><div class="td-bold">Rachel Green</div><div class="td-muted" style="font-size:.67rem">r.green@uni.edu</div></div></div></td><td class="td-muted">Student</td><td class="td-muted">2026-03-15</td><td><span class="pill pill-amber">Pending</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">MS</div><div><div class="td-bold">Michael Scott</div><div class="td-muted" style="font-size:.67rem">m.scott@uni.edu</div></div></div></td><td class="td-muted">Student</td><td class="td-muted">2026-03-14</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#EA580C;color:#fff">KN</div><div><div class="td-bold">Dr. Kim Nguyen</div><div class="td-muted" style="font-size:.67rem">k.nguyen@uni.edu</div></div></div></td><td class="td-muted">Supervisor</td><td class="td-muted">2026-03-12</td><td><span class="pill pill-green">Active</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="ut-active" class="tab-panel tbl-wrap">
+            <table>
+              <thead><tr><th>User</th><th>Role</th><th>Sessions (30d)</th><th>Last Login</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">Sarah Johnson</td><td class="td-muted">Student</td><td style="font-weight:700;color:var(--navy)">42</td><td class="td-muted">Today 09:14</td><td><span class="pill pill-green">Active</span></td></tr>
+                <tr><td class="td-bold">Dr. Michael Chen</td><td class="td-muted">Supervisor</td><td style="font-weight:700;color:var(--navy)">38</td><td class="td-muted">Today 08:51</td><td><span class="pill pill-green">Active</span></td></tr>
+                <tr><td class="td-bold">David Lee</td><td class="td-muted">Student</td><td style="font-weight:700;color:var(--navy)">35</td><td class="td-muted">Today 10:02</td><td><span class="pill pill-green">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="ut-inactive" class="tab-panel tbl-wrap">
+            <table>
+              <thead><tr><th>User</th><th>Role</th><th>Last Login</th><th>Days Inactive</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">Chris Taylor</td><td class="td-muted">Student</td><td class="td-muted">2026-02-10</td><td style="color:var(--red);font-weight:700">37 days</td><td><button class="btn btn-outline btn-xs" onclick="showToast('Reminder sent to Chris Taylor')">Send Reminder</button></td></tr>
+                <tr><td class="td-bold">Dr. Alan Park</td><td class="td-muted">Supervisor</td><td class="td-muted">2026-02-01</td><td style="color:var(--red);font-weight:700">46 days</td><td><button class="btn btn-outline btn-xs" onclick="showToast('Reminder sent to Dr. Park')">Send Reminder</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- System status + Alerts -->
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">System Status</div><div style="font-size:.65rem;color:var(--green);font-weight:700">● All systems operational</div></div>
+            <div class="sys-item"><div class="sys-ico" style="background:var(--green-dim)">🗄️</div><div class="sys-name">Database<div class="sys-detail">PostgreSQL · 99.9% uptime</div></div><span class="status-dot sd-green"></span></div>
+            <div class="sys-item"><div class="sys-ico" style="background:var(--blue-dim)">⚡</div><div class="sys-name">API Services<div class="sys-detail">REST · Online</div></div><span class="status-dot sd-green"></span></div>
+            <div class="sys-item"><div class="sys-ico" style="background:var(--amber-dim)">💾</div><div class="sys-name">Storage<div class="sys-detail">78% used · 2.4 GB / 3.1 GB</div></div><span class="status-dot sd-amber"></span><div style="width:80px;margin-left:.5rem"><div class="usage-bar"><div class="usage-fill" style="width:78%;background:var(--orange)"></div></div></div></div>
+            <div class="sys-item"><div class="sys-ico" style="background:var(--green-dim)">🔒</div><div class="sys-name">Security<div class="sys-detail">SSL · Protected</div></div><span class="status-dot sd-green"></span></div>
+            <div class="sys-item"><div class="sys-ico" style="background:var(--blue-dim)">📧</div><div class="sys-name">Email Service<div class="sys-detail">SMTP · Delivering</div></div><span class="status-dot sd-green"></span></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Recent Alerts</div></div>
+            <div class="alert-item"><div class="alert-dot sd-green"></div><div><div class="alert-text">Database backup completed</div><div class="alert-time">1h ago</div></div></div>
+            <div class="alert-item"><div class="alert-dot sd-amber"></div><div><div class="alert-text">High storage usage detected (78%)</div><div class="alert-time">5h ago</div></div></div>
+            <div class="alert-item"><div class="alert-dot sd-green"></div><div><div class="alert-text">Security scan completed — 0 threats</div><div class="alert-time">6h ago</div></div></div>
+            <div class="alert-item"><div class="alert-dot sd-blue"></div><div><div class="alert-text">12 new user registrations processed</div><div class="alert-time">1d ago</div></div></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Pending approvals + Quick actions -->
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Pending Approvals</div><div class="card-sub">Requests requiring administrator action</div></div><span class="pill pill-red" style="padding:.28rem .65rem;font-size:.7rem">15 Pending</span></div>
+          <div class="approval-item">
+            <div class="approval-info"><div class="approval-title">Account Request <span class="pill pill-red">high</span></div><div class="approval-meta">Dr. Jennifer White • New Supervisor Account · Computer Science</div><div class="approval-date">Submitted: 2026-03-17</div></div>
+            <div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-green btn-xs" onclick="showToast('Account approved — welcome email sent')">✓</button><button class="btn btn-outline btn-xs" onclick="showToast('Request deferred')">Defer</button></div>
+          </div>
+          <div class="approval-item">
+            <div class="approval-info"><div class="approval-title">Role Change <span class="pill pill-amber">medium</span></div><div class="approval-meta">Thomas Brown • Student → Department Chair</div><div class="approval-date">Submitted: 2026-03-16</div></div>
+            <div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-green btn-xs" onclick="showToast('Role change approved')">✓</button><button class="btn btn-red btn-xs" onclick="showToast('Role change denied')">✗</button></div>
+          </div>
+          <div class="approval-item">
+            <div class="approval-info"><div class="approval-title">Data Access Request <span class="pill pill-blue">low</span></div><div class="approval-meta">Research Team • Analytics Dashboard access</div><div class="approval-date">Submitted: 2026-03-15</div></div>
+            <div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-green btn-xs" onclick="showToast('Access granted')">✓</button><button class="btn btn-outline btn-xs">Deny</button></div>
+          </div>
+          <div class="approval-item">
+            <div class="approval-info"><div class="approval-title">Password Reset Request <span class="pill pill-amber">medium</span></div><div class="approval-meta">Sarah Johnson · Student · PG/2024/001</div><div class="approval-date">Submitted: 2026-03-15</div></div>
+            <div style="display:flex;gap:.4rem;flex-shrink:0"><button class="btn btn-green btn-xs" onclick="showToast('Password reset link sent')">✓</button><button class="btn btn-outline btn-xs">Decline</button></div>
+          </div>
+        </div>
+ 
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Quick Actions</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Common admin tasks</div></div>
+            <div class="qa-row">
+              <button class="qa-btn navy" onclick="openModal('add-user-modal')">👤 Create New User Account</button>
+              <button class="qa-btn" onclick="openModal('perms-modal')">🔐 Manage Permissions & Roles</button>
+              <button class="qa-btn" onclick="showToast('Database backup initiated…')">💾 Database Backup & Restore</button>
+              <button class="qa-btn" onclick="showToast('System report generated')">📊 Generate System Reports</button>
+              <button class="qa-btn" onclick="nav(document.querySelectorAll('.nav-link')[4],'system')">⚙️ System Configuration</button>
+              <button class="qa-btn" onclick="showToast('Analytics dashboard loading…')">📈 View Analytics Dashboard</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">System Information</div></div>
+            <div class="sysinfo">
+              <div class="sysinfo-row"><span class="sysinfo-key">Version</span><span class="sysinfo-val">v2.5.1</span></div>
+              <div class="sysinfo-row"><span class="sysinfo-key">Last Update</span><span class="sysinfo-val">2026-03-10</span></div>
+              <div class="sysinfo-row"><span class="sysinfo-key">Database Size</span><span class="sysinfo-val">2.4 GB</span></div>
+              <div class="sysinfo-row"><span class="sysinfo-key">Active Licences</span><span class="sysinfo-val">500 / 1000</span></div>
+              <div class="sysinfo-row"><span class="sysinfo-key">Last Backup</span><span class="sysinfo-val" style="color:var(--green)">1h ago</span></div>
+              <div class="sysinfo-row"><span class="sysinfo-key">Environment</span><span class="sysinfo-val">Production</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- USER MANAGEMENT -->
+    <section class="section-view" id="view-users">
+      <div class="page-hdr"><div><h2>User Management</h2><p>All registered users — 523 total</p></div><div class="page-hdr-actions"><button class="btn btn-navy" onclick="openModal('add-user-modal')">+ Add User</button><button class="btn btn-outline" onclick="showToast('User list exported')">⬇ Export</button></div></div>
+      <div class="card" style="margin-bottom:1rem;padding:1rem 1.25rem;display:flex;gap:.65rem;flex-wrap:wrap;align-items:center">
+        <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"><option>All Roles</option><option>Student</option><option>Supervisor</option><option>Chair</option><option>Admin</option><option>Dean</option></select>
+        <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"><option>All Departments</option><option>Computer Science</option><option>Engineering</option><option>Mathematics</option><option>Physics</option></select>
+        <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"><option>All Status</option><option>Active</option><option>Pending</option><option>Suspended</option><option>Inactive</option></select>
+        <input type="search" class="form-control" style="max-width:220px;padding:.38rem .75rem;font-size:.78rem" placeholder="🔍  Search users…"/>
+        <button class="btn btn-navy btn-sm" style="margin-left:auto" onclick="showToast('Filters applied')">Apply Filters</button>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>User</th><th>Role</th><th>Department</th><th>Status</th><th>Last Login</th><th>Sessions</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><div><div class="td-bold">Sarah Johnson</div><div class="td-muted" style="font-size:.67rem">s.j@uni.edu · ID: PG/2024/001</div></div></div></td><td class="td-muted">Student</td><td class="td-muted">Computer Science</td><td><span class="pill pill-green">Active</span></td><td class="td-muted">Today 09:14</td><td class="td-muted">42</td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button> <button class="btn btn-outline btn-xs" onclick="showToast('Reset link sent')">Reset PW</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">MC</div><div><div class="td-bold">Dr. Michael Chen</div><div class="td-muted" style="font-size:.67rem">m.chen@uni.edu · ID: SUP/2018/004</div></div></div></td><td class="td-muted">Supervisor</td><td class="td-muted">Computer Science</td><td><span class="pill pill-green">Active</span></td><td class="td-muted">Today 08:51</td><td class="td-muted">38</td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button> <button class="btn btn-outline btn-xs" onclick="showToast('Reset link sent')">Reset PW</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">ER</div><div><div class="td-bold">Prof. Emily Rodriguez</div><div class="td-muted" style="font-size:.67rem">e.rodriguez@uni.edu · ID: CHR/2015/001</div></div></div></td><td class="td-muted">Chair</td><td class="td-muted">Computer Science</td><td><span class="pill pill-green">Active</span></td><td class="td-muted">2026-03-17</td><td class="td-muted">28</td><td><button class="btn btn-outline btn-xs" onclick="openModal('user-detail-modal')">Manage</button> <button class="btn btn-outline btn-xs">Reset PW</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">RG</div><div><div class="td-bold">Rachel Green</div><div class="td-muted" style="font-size:.67rem">r.green@uni.edu · ID: PG/2025/044</div></div></div></td><td class="td-muted">Student</td><td class="td-muted">Mathematics</td><td><span class="pill pill-amber">Pending</span></td><td class="td-muted">Never</td><td class="td-muted">0</td><td><button class="btn btn-green btn-xs" onclick="showToast('Account activated')">Activate</button> <button class="btn btn-outline btn-xs">Delete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- DATA MANAGEMENT -->
+    <section class="section-view" id="view-data">
+      <div class="page-hdr"><div><h2>Data Management</h2><p>Database administration and backup management</p></div></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Total Records</span><div class="stat-ico ico-navy">🗄️</div></div><div class="stat-val">24.7K</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Last Backup</span><div class="stat-ico ico-green">💾</div></div><div class="stat-val">1h ago</div><div class="stat-sub" style="color:var(--green)">Automated · Successful</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Storage Used</span><div class="stat-ico ico-amber">📦</div></div><div class="stat-val">2.4 GB</div><div class="stat-sub">of 3.1 GB · 78%</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Failed Imports</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">0</div><div class="stat-sub" style="color:var(--green)">All imports clean</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Backup History</div><button class="btn btn-navy btn-sm" onclick="showToast('Manual backup initiated…')">▶ Run Backup Now</button></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Backup Name</th><th>Type</th><th>Size</th><th>Status</th><th>Timestamp</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">backup_20260319_0800</td><td class="td-muted">Automated</td><td class="td-muted">2.38 GB</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">Today 08:00</td></tr>
+                <tr><td class="td-bold">backup_20260318_0800</td><td class="td-muted">Automated</td><td class="td-muted">2.35 GB</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">Yesterday 08:00</td></tr>
+                <tr><td class="td-bold">backup_20260317_manual</td><td class="td-muted">Manual</td><td class="td-muted">2.31 GB</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">17 Mar 14:22</td></tr>
+                <tr><td class="td-bold">backup_20260316_0800</td><td class="td-muted">Automated</td><td class="td-muted">2.28 GB</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">16 Mar 08:00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Storage Breakdown</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.65rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem"><span>📄 Submission Documents</span><strong>1.1 GB</strong></div>
+            <div class="usage-bar"><div class="usage-fill" style="width:45%;background:var(--navy)"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem"><span>👤 User Data</span><strong>0.6 GB</strong></div>
+            <div class="usage-bar"><div class="usage-fill" style="width:25%;background:var(--blue)"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem"><span>📊 Reports & Analytics</span><strong>0.4 GB</strong></div>
+            <div class="usage-bar"><div class="usage-fill" style="width:16%;background:var(--green)"></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem"><span>📝 Audit Logs</span><strong>0.3 GB</strong></div>
+            <div class="usage-bar"><div class="usage-fill" style="width:12%;background:var(--amber)"></div></div>
+            <hr style="border:none;border-top:1px solid var(--border)"/>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem"><span style="color:var(--muted)">Free Storage</span><strong style="color:var(--green)">0.7 GB remaining</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- SECURITY -->
+    <section class="section-view" id="view-security">
+      <div class="page-hdr"><div><h2>Security</h2><p>Monitor threats, manage access control, and audit activity</p></div><button class="btn btn-navy" onclick="showToast('Security scan initiated…')">🔍 Run Scan</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Threats Detected</span><div class="stat-ico ico-green">🛡️</div></div><div class="stat-val">0</div><div class="stat-sub" style="color:var(--green)">System secure</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Failed Logins (24h)</span><div class="stat-ico ico-navy">🔑</div></div><div class="stat-val">8</div><div class="stat-sub">Within normal range</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">SSL Certificate</span><div class="stat-ico ico-amber">🔒</div></div><div class="stat-val">Valid</div><div class="stat-sub">Expires in 142 days</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Last Scan</span><div class="stat-ico ico-green">⏱️</div></div><div class="stat-val">6h ago</div><div class="stat-sub" style="color:var(--green)">All clear</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Login Attempt Log</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>User</th><th>IP Address</th><th>Result</th><th>Timestamp</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">Sarah Johnson</td><td class="td-mono">196.201.xx.xx</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">Today 09:14</td></tr>
+                <tr><td class="td-bold">Unknown</td><td class="td-mono">185.220.xx.xx</td><td><span class="pill pill-red">Failed (3×)</span></td><td class="td-muted">Today 02:33</td></tr>
+                <tr><td class="td-bold">Dr. Michael Chen</td><td class="td-mono">41.90.xx.xx</td><td><span class="pill pill-green">Success</span></td><td class="td-muted">Today 08:51</td></tr>
+                <tr><td class="td-bold">Unknown</td><td class="td-mono">198.51.xx.xx</td><td><span class="pill pill-red">Failed (1×)</span></td><td class="td-muted">Yesterday 23:11</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Access Control Settings</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.65rem">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Two-Factor Authentication (all users)</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Force password reset every 90 days</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Block after 5 failed login attempts</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Session timeout after 60 min idle</span><input type="checkbox"/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Log all admin actions</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>IP allowlist (staff network only)</span><input type="checkbox"/></label>
+            <button class="btn btn-navy" style="margin-top:.5rem" onclick="showToast('Security settings saved')">Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- SYSTEM SETTINGS -->
+    <section class="section-view" id="view-system">
+      <div class="page-hdr"><div><h2>System Settings</h2><p>Global configuration for PAPMS</p></div></div>
+      <div class="grid-65-35">
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">General Settings</div></div>
+            <div class="card-body">
+              <div class="form-row"><div class="form-group"><label class="form-label">Institution Name</label><input class="form-control" value="University of Technology"/></div><div class="form-group"><label class="form-label">System Name</label><input class="form-control" value="PAPMS"/></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">Admin Email</label><input class="form-control" type="email" value="admin@uni.edu"/></div><div class="form-group"><label class="form-label">Support Email</label><input class="form-control" type="email" value="support@uni.edu"/></div></div>
+              <div class="form-row"><div class="form-group"><label class="form-label">Max Users</label><input class="form-control" type="number" value="1000"/></div><div class="form-group"><label class="form-label">Backup Frequency</label><select class="form-control"><option>Every Hour</option><option>Every 6 Hours</option><option selected>Daily</option></select></div></div>
+              <div class="form-group"><label class="form-label">Maintenance Window</label><input class="form-control" value="Sunday 02:00–04:00 UTC"/></div>
+              <button class="btn btn-navy" onclick="showToast('System settings saved')">Save Settings</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Email / Notification Templates</div></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">Welcome Email Subject</label><input class="form-control" value="Welcome to PAPMS — {institution_name}"/></div>
+              <div class="form-group"><label class="form-label">Password Reset Subject</label><input class="form-control" value="Reset your PAPMS password"/></div>
+              <div class="form-group"><label class="form-label">Submission Reminder Template</label><textarea class="form-control">Dear {student_name}, your submission for {submission_title} is due in {days_remaining} days. Please log in to PAPMS to submit your work.</textarea></div>
+              <button class="btn btn-navy" onclick="showToast('Templates saved')">Save Templates</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Feature Flags</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:.6rem">
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>ERP Finance Integration</span><input type="checkbox" checked/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Plagiarism Checker</span><input type="checkbox" checked/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>AI Feedback Suggestions</span><input type="checkbox"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Student Self-Enrollment</span><input type="checkbox" checked/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Zoom Meeting Integration</span><input type="checkbox"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Public API Access</span><input type="checkbox"/></label>
+              <button class="btn btn-navy" style="margin-top:.35rem" onclick="showToast('Feature flags updated')">Update Flags</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Danger Zone</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:.65rem">
+              <div style="background:var(--red-dim);border:1px solid rgba(220,38,38,.25);padding:.85rem">
+                <div style="font-size:.78rem;font-weight:700;color:var(--red);margin-bottom:.35rem">⚠ Destructive Actions</div>
+                <div style="font-size:.72rem;color:var(--muted);margin-bottom:.65rem">These actions cannot be undone. Proceed with caution.</div>
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-bottom:.4rem;border-color:var(--red);color:var(--red)" onclick="showToast('Operation cancelled — safety check failed')">🗑 Purge Inactive Users</button>
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;border-color:var(--red);color:var(--red)" onclick="showToast('Operation cancelled — safety check failed')">⚠ Reset All Passwords</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- AUDIT LOGS -->
+    <section class="section-view" id="view-logs">
+      <div class="page-hdr"><div><h2>Audit Logs</h2><p>Complete system activity log — tamper-proof</p></div><button class="btn btn-outline" onclick="showToast('Logs exported as CSV')">⬇ Export CSV</button></div>
+      <div class="card" style="margin-bottom:1rem;padding:1rem 1.25rem;display:flex;gap:.65rem;flex-wrap:wrap">
+        <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"><option>All Actions</option><option>Login</option><option>Logout</option><option>Create</option><option>Update</option><option>Delete</option><option>Approve</option></select>
+        <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"><option>All Users</option><option>Admin</option><option>Supervisor</option><option>Student</option></select>
+        <input type="date" class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"/>
+        <input type="date" class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem"/>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Resource</th><th>Details</th><th>IP Address</th></tr></thead>
+            <tbody>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-19 10:14:22</td><td class="td-bold">Admin User</td><td><span class="pill pill-navy">UPDATE</span></td><td class="td-muted">User: Rachel Green</td><td class="td-muted">Status changed: Pending → Active</td><td class="td-mono td-muted">10.0.1.5</td></tr>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-19 10:02:11</td><td class="td-bold">Admin User</td><td><span class="pill pill-green">CREATE</span></td><td class="td-muted">User: Kim Nguyen</td><td class="td-muted">New supervisor account created</td><td class="td-mono td-muted">10.0.1.5</td></tr>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-19 09:14:08</td><td class="td-bold">Sarah Johnson</td><td><span class="pill pill-blue">LOGIN</span></td><td class="td-muted">Auth</td><td class="td-muted">Successful login via web</td><td class="td-mono td-muted">196.201.42.xx</td></tr>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-19 08:51:33</td><td class="td-bold">Dr. Michael Chen</td><td><span class="pill pill-blue">LOGIN</span></td><td class="td-muted">Auth</td><td class="td-muted">Successful login via web</td><td class="td-mono td-muted">41.90.11.xx</td></tr>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-19 02:33:01</td><td class="td-bold">Unknown</td><td><span class="pill pill-red">FAILED</span></td><td class="td-muted">Auth</td><td class="td-muted">3 failed login attempts — account locked</td><td class="td-mono td-muted">185.220.10.xx</td></tr>
+              <tr><td class="td-muted td-mono" style="font-size:.7rem">2026-03-18 08:00:00</td><td class="td-bold">System</td><td><span class="pill pill-green">BACKUP</span></td><td class="td-muted">Database</td><td class="td-muted">Automated backup completed — 2.35 GB</td><td class="td-mono td-muted">Internal</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- MODALS -->
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Create New User Account</div><button class="modal-close" onclick="closeModal('add-user-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">First Name</label><input class="form-control" placeholder="e.g. Sarah"/></div><div class="form-group"><label class="form-label">Last Name</label><input class="form-control" placeholder="e.g. Johnson"/></div></div>
+      <div class="form-group"><label class="form-label">Email Address</label><input class="form-control" type="email" placeholder="name@university.edu"/></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Role</label><select class="form-control"><option>Student</option><option>Supervisor</option><option>Chair</option><option>Admin</option><option>Dean</option></select></div><div class="form-group"><label class="form-label">Department</label><select class="form-control"><option>Computer Science</option><option>Engineering</option><option>Mathematics</option><option>Physics</option><option>Chemistry</option></select></div></div>
+      <div class="form-group"><label class="form-label">Student/Staff ID</label><input class="form-control" placeholder="e.g. PG/2026/001"/></div>
+      <div class="form-group"><label class="form-label">Send Welcome Email?</label><select class="form-control"><option>Yes — send login credentials</option><option>No — manual setup</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('add-user-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('add-user-modal');showToast('User account created — welcome email sent')">Create Account</button></div>
+  </div>
+</div>
+ 
+<div class="modal-overlay" id="user-detail-modal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-hdr"><div class="modal-title">Manage User — Sarah Johnson</div><button class="modal-close" onclick="closeModal('user-detail-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--off);padding:1rem;margin-bottom:1rem;display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center">
+        <div class="av" style="width:48px;height:48px;background:#0A194E;color:var(--amber);font-size:.9rem">SJ</div>
+        <div><div style="font-weight:700;font-size:.95rem">Sarah Johnson</div><div style="font-size:.75rem;color:var(--muted)">s.j@uni.edu · ID: PG/2024/001 · PhD Computer Science</div></div>
+      </div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Role</label><select class="form-control"><option selected>Student</option><option>Supervisor</option><option>Chair</option></select></div><div class="form-group"><label class="form-label">Status</label><select class="form-control"><option selected>Active</option><option>Suspended</option><option>Inactive</option></select></div></div>
+      <div class="form-group"><label class="form-label">Department</label><select class="form-control"><option selected>Computer Science</option><option>Engineering</option></select></div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+        <button class="btn btn-outline btn-sm" onclick="showToast('Password reset email sent')">🔑 Reset Password</button>
+        <button class="btn btn-outline btn-sm" onclick="showToast('User session terminated')">🚫 Force Logout</button>
+        <button class="btn btn-outline btn-sm" style="border-color:var(--red);color:var(--red)" onclick="showToast('Account suspended')">⊘ Suspend Account</button>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('user-detail-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('user-detail-modal');showToast('User account updated successfully')">Save Changes</button></div>
+  </div>
+</div>
+ 
+<div class="modal-overlay" id="perms-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Manage Permissions & Roles</div><button class="modal-close" onclick="closeModal('perms-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">Configure which actions each role can perform in PAPMS.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Permission</th><th>Student</th><th>Supervisor</th><th>Chair</th><th>Admin</th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">Submit work</td><td style="text-align:center;color:var(--green)">✓</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+            <tr><td class="td-bold">Review submissions</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--green)">✓</td><td style="text-align:center;color:var(--green)">✓</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+            <tr><td class="td-bold">Manage users</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+            <tr><td class="td-bold">View analytics</td><td style="text-align:center;color:var(--muted)">—</td><td style="text-align:center;color:var(--green)">✓</td><td style="text-align:center;color:var(--green)">✓</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('perms-modal')">Close</button><button class="btn btn-navy" onclick="closeModal('perms-modal');showToast('Permissions updated')">Save Permissions</button></div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+function nav(el,id){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const v=document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  const t={dashboard:'System Administration',users:'User Management',data:'Data Management',security:'Security',system:'System Settings',logs:'Audit Logs'};
+  document.getElementById('topbar-title').textContent=t[id]||'Administration';
+}
+function switchTab(gId,pId,btn){
+  const g=document.getElementById(gId);
+  g.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  g.parentElement.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pId).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+document.querySelectorAll('.nav-link[onclick]').forEach(l=>l.addEventListener('click',function(){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));this.classList.add('active')}));
+</script>
+</body>
+</html>
