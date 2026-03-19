@@ -30,12 +30,12 @@ document.querySelectorAll('a, button, .module-card, .role-card').forEach(el => {
   });
 });
 function handleLogin() {
-    const email = document.getElementById('email').value;
+  const regNumber = document.getElementById('regNumber').value;
     const password = document.getElementById('password').value;
 
     // Basic validation
     if (!email || !password) {
-        showToast("Please enter your credentials");
+        showToast("Please enter your Registration Number and password");
         return;
     }
 
@@ -45,7 +45,7 @@ function handleLogin() {
         // Redirect to a role selection portal instead of a generic dashboard
         window.location.href = 'staff-role-selection.html';
     } else {
-        window.location.href = 'student.html';
+        window.location.href = 'student-dashboard.html';
     }
 }
 window.addEventListener('scroll',()=>{ document.getElementById('navbar').classList.toggle('scrolled',scrollY>50); });
