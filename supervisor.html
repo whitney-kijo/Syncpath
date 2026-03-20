@@ -79,6 +79,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(
 .section-view.active{display:block}
  
 /* Page header */
+.page {
+    display: none; 
+}
+.page.active {
+    display: block; 
+}
 .page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
 .page-hdr-left h2{font-family:'Lora',serif;font-size:1.45rem;font-weight:700;color:var(--navy);line-height:1.2}
 .page-hdr-left p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
@@ -848,6 +854,15 @@ document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
     this.classList.add('active');
   });
 });
+function showPage(pageId) {
+    // 1. Hide all elements with the class 'page'
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // 2. Show the specific page that was clicked
+    document.getElementById(pageId).classList.add('active');
+}
 </script>
 </body>
 </html>

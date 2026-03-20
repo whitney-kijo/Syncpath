@@ -25,6 +25,9 @@
   --blue:#1E7EDE;
   --blue-dim:rgba(30,126,222,0.1);
   --orange:#F57C00;
+  --color-lit: #4CAF50;
+  --color-meth: #2196F3;
+  --color-data: #FFC107;
   --orange-dim:rgba(245,124,0,0.1);
   --sidebar:230px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -52,19 +55,24 @@ body{
   gap:0.65rem;
   text-decoration:none}
 .logo-badge{
-  width:32px;
-  height:32px;
-  background:var(--amber);
+  width:150px;
+  height:50px;
+  background:white;
   border-radius:7px;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:1rem;
-  flex-shrink:0}
-.logo-text{
-  font-size:1.05rem;
-  font-weight:800;
-  color:var(--white)}
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px
+}
 .sidebar-section{
   padding:1.1rem 0 0.4rem}
 .sidebar-section-label{
@@ -72,26 +80,27 @@ body{
   font-weight:700;
   letter-spacing:0.18em;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.28);
+  color:rgb(255, 255, 255);
   padding:0 1.25rem;
   margin-bottom:0.25rem;
-  display:block}
+  display:block
+}
 .nav-item{
   display:flex;
   align-items:center;
   gap:0.7rem;
   padding:0.6rem 1.25rem;
-  color:rgba(255,255,255,0.52);
+  color:rgb(255, 255, 255);
   font-size:0.82rem;
   font-weight:500;
   cursor:pointer;
   transition:all 0.18s;
   border-left:3px solid transparent}
 .nav-item:hover{
-  color:rgba(255,255,255,0.88);
+  color:#FFC107;
   background:rgba(255,255,255,0.055)}
 .nav-item.active{
-  color:var(--white);
+  color:#FFC107;
   background:rgba(255,255,255,0.1);
   border-left-color:var(--amber)}
 .nav-item .ni{
@@ -118,7 +127,8 @@ body{
 .user-card{
   display:flex;
   align-items:center;
-  gap:0.65rem}
+  gap:0.65rem
+}
 .user-avatar{
   width:36px;
   height:36px;
@@ -137,14 +147,14 @@ body{
   color:var(--white)}
 .user-role{
   font-size:0.65rem;
-  color:rgba(255,255,255,0.38)}
+  color:rgb(255, 255, 255)}
 .logout-btn{
   margin-left:auto;
   width:28px;
   height:28px;
   border:none;
   background:rgba(255,255,255,0.07);
-  color:rgba(255,255,255,0.4);
+  color:rgb(255, 255, 255);
   cursor:pointer;
   border-radius:6px;
   font-size:0.85rem;
@@ -314,7 +324,7 @@ margin-bottom:0.3rem
 }
 .wb-sub{
   font-size:0.8rem;
-  color:rgba(255,255,255,0.55)}
+  color:rgb(255, 255, 255)}
 .wb-actions{
   display:flex;
   gap:0.65rem;
@@ -434,6 +444,35 @@ margin-bottom:0.3rem
   background:var(--off)}
 .svg-chart{
   width:100%}
+  .pie-chart {
+  transform: rotate(-90deg); /* Essential to make slices start at 12 o'clock */
+}
+
+/* Optional: Make the slices look like a donut by making the stroke-width smaller */
+.pie-chart circle {
+  transition: stroke-dasharray 0.3s ease;
+}
+.chart-text {
+    /* This ensures the text stays horizontal even if the circle is rotated */
+    transform: rotate(90deg); 
+    transform-origin: center;
+}
+
+.pie-number {
+    font-size: 7px; /* Scaled to fit the 42px viewbox */
+    font-weight: 800;
+    fill: #333;
+    text-anchor: middle; /* This is the "Center Align" for SVGs */
+    dominant-baseline: middle; 
+}
+
+.pie-label {
+    font-size: 3px;
+    fill: #888;
+    text-anchor: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
 .chart-legend{
   display:flex;gap:1.1rem;
   margin-top:0.65rem}
@@ -980,7 +1019,10 @@ a.link-btn:hover{
 .notif-item:hover{background:var(--off)}
 .notif-item.unread{background:rgba(10,25,78,0.025)}
 .ni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
-.ni-blue{background:var(--blue)} .ni-green{background:var(--green)} .ni-red{background:var(--red)} .ni-amber{background:var(--amber)}
+.ni-blue{background:var(--blue)} 
+.ni-green{background:var(--green)} 
+.ni-red{background:var(--red)}
+ .ni-amber{background:var(--amber)}
 .notif-text{font-size:0.82rem;color:var(--text);line-height:1.5}
 .notif-time{font-size:0.67rem;color:var(--soft);margin-top:0.18rem}
 /* alert */
@@ -998,7 +1040,12 @@ a.link-btn:hover{
 </head>
 <body>
 <aside class="sidebar">
-  <a class="sidebar-logo" href="index.html"><div class="logo-badge">🎓</div><span class="logo-text">PAPMS</span></a>
+  <a class="sidebar-logo" href="index.html">
+    <div class="logo-badge">
+      <img src="assets/R.U logo.png" alt="R.U logo" class="logo-img">
+    </div>
+    
+  </a>
   <div class="sidebar-section">
     <span class="sidebar-section-label">Main</span>
     <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">◈</span> Dashboard</div>
@@ -1020,7 +1067,8 @@ a.link-btn:hover{
     <div class="user-card">
       <div class="user-avatar">SJ</div>
       <div><div class="user-name">Sarah Johnson</div><div class="user-role">PhD Student</div></div>
-      <button class="logout-btn" onclick="window.location.href='login.html'">⏻</button>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⍈ Logout</button>
+    </button>
     </div>
   </div>
 </aside>
@@ -1029,7 +1077,9 @@ a.link-btn:hover{
   <div class="topbar">
     <div>
       <div class="topbar-title" id="tb-title">Welcome back, Sarah! 👋</div>
-      <div class="topbar-sub" id="tb-sub">Here's your academic progress overview · Thursday, March 19, 2026</div>
+      <div class="topbar-sub" id="tb-sub">
+    Here's your academic progress overview · <span id="current-date"></span>
+</div>
     </div>
     <div class="topbar-right">
       <button class="icon-btn" onclick="toggleNotif()">🔔<span class="badge-dot"></span></button>
@@ -1047,63 +1097,86 @@ a.link-btn:hover{
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="welcome-banner">
-        <div><div class="wb-title">Welcome back, Sarah! 👋</div><div class="wb-sub">You're making great progress. 3 tasks due this week — keep going!</div></div>
+        <div><div class="wb-title">Welcome back, Sarah! 👋</div><div class="wb-sub">You're making great progress. 3 tasks due this week   keep going!</div></div>
         <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting',null)">Book Presentations</button></div>
       </div>
 
-
-      <div class="page" id="page-pipeline">
-        <div class="section-head">
-          <div><div class="section-title">Assessment Pipeline</div><div class="section-sub">Your progress through the 8-stage postgraduate assessment process</div></div>
-        </div>
-        <div class="card" style="margin-bottom:1.5rem">
-          <div class="card-header"><div><div class="card-title">Current Stage</div><div class="card-sub">Stage 4 of 8 — Data Analysis & Writing</div></div></div>
-          <div class="pipeline">
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Proposal Submission</div></div></div>
-            <div class="pipeline-arrow done-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Ethics Clearance</div></div></div>
-            <div class="pipeline-arrow done-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-done">✓</div><div class="pn-label">Data Collection</div></div></div>
-            <div class="pipeline-arrow done-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-active">4</div><div class="pn-label" style="color:var(--navy);font-weight:700">Data Analysis</div></div></div>
-            <div class="pipeline-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">5</div><div class="pn-label">Chapter Writing</div></div></div>
-            <div class="pipeline-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">6</div><div class="pn-label">Supervisor Review</div></div></div>
-            <div class="pipeline-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">7</div><div class="pn-label">Committee Review</div></div></div>
-            <div class="pipeline-arrow"></div>
-            <div class="pipeline-step"><div class="pipeline-node"><div class="pn-circle pn-pending">8</div><div class="pn-label">Final Submission</div></div></div>
-          </div>
-          <div class="card-footer">
-            <div style="display:flex;align-items:center;gap:1.5rem;font-size:0.78rem">
-              <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>Completed (3)</span>
-              <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--navy);display:inline-block"></span>Current (1)</span>
-              <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--off2);border:1px solid var(--border);display:inline-block"></span>Upcoming (4)</span>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div><div class="card-title">Stage 4 Details — Data Analysis & Writing</div></div></div>
-          <div class="card-body">
-            <div class="alert alert-warning" style="margin-bottom:1rem"><div class="alert-text"><strong>Action Required:</strong> Chapter 4 (Data Analysis) needs to be resubmitted with statistical revisions by April 30, 2026.</div></div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem">
-              <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Status</div><div style="font-weight:700;color:var(--orange)">In Revision</div></div>
-              <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Deadline</div><div style="font-weight:700;color:var(--navy)">Apr 30, 2026</div></div>
-              <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Submissions</div><div style="font-weight:700;color:var(--navy)">2 (1 revision req.)</div></div>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Resubmit Chapter 4</button>
-          </div>
-        </div>
+      <div class="card" style="margin-bottom:1.5rem">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Current Progress Pipeline</div>
+      <div class="card-sub">Stage 4 of 8 — Data Collection & Analysis</div>
+    </div>
+    <div class="pill pill-review">In Progress</div>
+  </div>
+  
+  <div class="pipeline" style="padding: 1.5rem 1rem;">
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-done">✓</div>
+        <div class="pn-label">Concept Note</div>
       </div>
- 
+    </div>
+    <div class="pipeline-arrow done-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-done">✓</div>
+        <div class="pn-label">Proposal Seminar</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow done-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-done">✓</div>
+        <div class="pn-label">Ethics/NACOSTI</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow done-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-active">4</div>
+        <div class="pn-label" style="color:var(--navy);font-weight:700">Data & Analysis</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-pending">🔒</div>
+        <div class="pn-label">Notice of Submission</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-pending">6</div>
+        <div class="pn-label">Thesis Exam</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-pending">7</div>
+        <div class="pn-label">Oral Defense</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow"></div>
+
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+        <div class="pn-circle pn-pending">8</div>
+        <div class="pn-label">Graduation</div>
+      </div>
+    </div>
+  </div>
+</div>
+
       <div class="stats-grid">
-        <div class="stat-card sc-navy">
-          <div class="stat-head"><div class="stat-label">Overall Progress</div><div class="stat-icon si-navy">📈</div></div>
-          <div class="stat-value">85%</div>
-          <div class="trend-up">↑ 12% from last month</div>
-          <div class="mini-bar"><div class="mini-bar-fill" style="width:85%;background:var(--navy)"></div></div>
-        </div>
         <div class="stat-card sc-amber">
           <div class="stat-head"><div class="stat-label">Pending Tasks</div><div class="stat-icon si-amber">⏰</div></div>
           <div class="stat-value">3</div>
@@ -1156,19 +1229,47 @@ a.link-btn:hover{
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><div><div class="card-title">Assessment Scores</div><div class="card-sub">Latest evaluation by category</div></div></div>
-          <div class="card-body">
-            <div class="bar-group">
-              <div class="bar-col"><div class="bar-val">82%</div><div class="bar-fill" style="height:82%;background:var(--green)"></div><div class="bar-lbl">Literature Review</div></div>
-              <div class="bar-col"><div class="bar-val">78%</div><div class="bar-fill" style="height:78%;background:var(--green)"></div><div class="bar-lbl">Methodology</div></div>
-              <div class="bar-col"><div class="bar-val">91%</div><div class="bar-fill" style="height:91%;background:var(--green)"></div><div class="bar-lbl">Data Analysis</div></div>
-              <div class="bar-col"><div class="bar-val">86%</div><div class="bar-fill" style="height:86%;background:var(--green)"></div><div class="bar-lbl">Writing Quality</div></div>
+          <div class="card-header">
+            <div>
+              <div class="card-title">Assessment Scores</div>
+              <div class="card-sub">Latest evaluation by category</div>
             </div>
-            <div class="chart-legend" style="margin-top:0.75rem"><div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Score</div></div>
+          </div>
+          <div class="card-body">
+            <div class="pie-container" style="display: flex; justify-content: center; align-items: center;">
+                <svg width="220" height="220" viewBox="0 0 42 42" class="pie-chart">
+                    <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#f2f2f2" stroke-width="4"></circle>
+        
+                    <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#4CAF50" stroke-width="4" 
+                            stroke-dasharray="25 75" stroke-dashoffset="100"></circle>
+        
+                    <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2196F3" stroke-width="4" 
+                            stroke-dasharray="25 75" stroke-dashoffset="75"></circle>
+        
+                    <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#FFC107" stroke-width="4" 
+                            stroke-dasharray="25 75" stroke-dashoffset="50"></circle>
+        
+                    <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#FF5722" stroke-width="4" 
+                            stroke-dasharray="25 75" stroke-dashoffset="25"></circle>
+                            <g class="chart-text">
+                              <text x="21" y="20" class="pie-number">84%</text>
+                              <text x="21" y="26" class="pie-label">Average</text>
+                          </g>
+                </svg>
+            </div>
+        
+            <div class="chart-legend" style="margin-top:1.5rem">
+                <div class="legend-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div> Literature Review: 82%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#2196F3"></div> Methodology: 78%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#FFC107"></div> Data Analysis: 91%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#FF5722"></div> Writing Quality: 86%</div>
+                </div>
+            </div>
+        </div>
+      
           </div>
         </div>
-      </div>
- 
       <div class="two-col">
         <div class="card">
           <div class="card-header"><div><div class="card-title">Upcoming Tasks & Milestones</div><div class="card-sub">Complete these to advance your progress</div></div><button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Submit</button></div>
