@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Student Dashboard — PAPMS</title>
+<title>Student Dashboard — R.U</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
 <style>
 :root{--navy:#0A194E;
@@ -476,6 +476,67 @@ margin-bottom:0.3rem
 .chart-legend{
   display:flex;gap:1.1rem;
   margin-top:0.65rem}
+  /* Unique CSS for the Finance Card */
+.stat-card-finance {
+
+    background: #0A194E;
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-bottom: 10px;
+}
+/* Unique yellow top-bar for Finance only */
+.stat-card-finance {
+    position: relative; /* Required for the absolute line to stick to the top */
+    overflow: hidden;
+}
+
+.stat-card-finance::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px; /* Slightly thicker for the Finance gate */
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+.stat-card-finance .stat-value.finance-data {
+    color: #ffffff; /* A clean success green */
+    font-weight: 800;
+}
+.stat-card-finance:hover::before {
+    transform: scaleX(1);
+}
+.stat-card-finance .stat-label {
+    color: #ffffff;
+    font-weight: bold;
+}
+.stat-value finance-data
+/* Unique CSS for the Finance Page */
+.finance-page-container {
+    padding: 2rem;
+    background-color: #ffffff;
+}
+
+.status-pill-cleared {
+    background: #d4edda;
+    color: #155724;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+.privacy-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+.privacy-toggle:hover {
+    transform: scale(1.2);
+}
 .legend-dot
 {width:9px;
   height:9px;
@@ -1049,6 +1110,7 @@ a.link-btn:hover{
   <div class="sidebar-section">
     <span class="sidebar-section-label">Main</span>
     <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="nav('finance',this)"><span class="ni">💰</span>Finance</div>
     <div class="nav-item" onclick="nav('submissions',this)"><span class="ni">📄</span> My Submissions</div>
     <div class="nav-item" onclick="nav('milestones',this)"><span class="ni">🎯</span> Milestones</div>
     <div class="nav-item" onclick="nav('feedback',this)"><span class="ni">💬</span> Feedback <span class="nav-badge">2</span></div>
@@ -1104,7 +1166,7 @@ a.link-btn:hover{
       <div class="card" style="margin-bottom:1.5rem">
   <div class="card-header">
     <div>
-      <div class="card-title">Current Progress Pipeline</div>
+      <div class="card-title">Current Progress</div>
       <div class="card-sub">Stage 4 of 8 — Data Collection & Analysis</div>
     </div>
     <div class="pill pill-review">In Progress</div>
@@ -1187,13 +1249,27 @@ a.link-btn:hover{
           <div class="stat-value">8<span style="font-size:1.1rem;color:var(--muted)">/12</span></div>
           <div class="stat-meta">4 remaining</div>
         </div>
-        <div class="stat-card sc-red">
+        <div class="stat-card sc-red" onclick="showPage('page-feedback')" style="cursor: pointer;">
           <div class="stat-head"><div class="stat-label">New Feedback</div><div class="stat-icon si-red">💬</div></div>
           <div class="stat-value">2</div>
           <div class="trend-down">Awaiting review</div>
         </div>
       </div>
- 
+    
+      <div class="stat-card stat-card-finance">
+        <div class="stat-head">
+          <div class="stat-label">FINANCE CLEARANCE</div>
+          <div class="privacy-toggle" onclick="toggleFinancePrivacy()">
+            <span id="eye-icon">👁️</span>
+          </div>
+        </div>
+        
+        <div class="stat-value finance-data">Approved</div>
+        <div class="trend-down finance-data">Reference: FIN-2026-001</div>
+        
+        <div class="privacy-mask" style="display: none;">••••••••</div>
+      </div>
+      
       <div class="charts-row">
         <div class="card">
           <div class="card-header">
@@ -1307,8 +1383,17 @@ a.link-btn:hover{
         </div>
         <div id="st-all" class="tab-pane active">
           <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Submitted</th><th>Status</th><th>Score</th><th>Actions</th></tr></thead><tbody>
-            <tr><td class="td-title">Chapter 3: Methodology</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-15</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">92%</span></td><td><a class="link-btn" onclick="nav('feedback',null)">View Feedback</a></td></tr>
-            <tr><td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">2026-03-10</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">88%</span></td><td><a class="link-btn" onclick="nav('feedback',null)">View Feedback</a></td></tr>
+            <tr>
+              <td class="td-title">Chapter 3: Methodology</td>
+              <td class="td-muted">Draft</td>
+              <td class="td-muted">2026-03-15</td>
+              <td><span class="pill pill-approved">Approved</span></td>
+              <td><span class="score-good">92%</span></td>
+              <td><a class="link-btn" style="cursor:pointer" onclick="showPage('page-feedback')">View Feedback</a></td>
+            </tr>
+            
+            <tr>
+              <td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">2026-03-10</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">88%</span></td><td><a class="link-btn" style="cursor:pointer" onclick="showPage('page-feedback')">View Feedback</a></td></tr>
             <tr><td class="td-title">Research Proposal</td><td class="td-muted">Proposal</td><td class="td-muted">2026-03-08</td><td><span class="pill pill-pending">Pending</span></td><td class="td-muted">—</td><td><a class="link-btn">View Details</a></td></tr>
             <tr><td class="td-title">Data Analysis Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-05</td><td><span class="pill pill-revision">Needs Revision</span></td><td><span class="score-ok">71%</span></td><td><a class="link-btn" onclick="openM('modal-submit')">Resubmit</a></td></tr>
             <tr><td class="td-title">Introduction Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-02-20</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">85%</span></td><td><a class="link-btn">View Details</a></td></tr>
@@ -1333,6 +1418,49 @@ a.link-btn:hover{
         </div>
       </div>
     </div>
+    <!--FINANCE  -->
+    <div class="page" id="page-finance">
+      <div class="section-head">
+    <div>
+      <div class="section-title">Finance & Fee Clearance</div>
+      <div class="section-sub">Digital integration with University ERP Finance Module</div>
+    </div>
+    <button class="btn btn-primary" onclick="requestFinanceClearance()">🔄 Refresh Status</button>
+  </div>
+
+  <div id="finance-alert" class="alert alert-warning" style="display: none;">
+    <div class="alert-text">
+      <strong>Clearance Pending:</strong> Finance clearance is currently held due to an outstanding fee balance. 
+      Please contact the Finance Office to settle your account. [cite: 88]
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title">Active Clearance Requests</div></div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Document Type</th>
+            <th>Period</th>
+            <th>ERP Reference</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="finance-requests-table">
+          <tr>
+            <td>Quarterly Progress Report</td>
+            <td>Q1 2026</td>
+            <td><code id="erp-ref">FIN-2026-004</code></td>
+            <td><span class="pill pill-review">Awaiting ERP Response</span></td>
+            <td>2026-03-20</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
  
     <!-- SUBMISSIONS PAGE -->
     <div class="page" id="page-submissions">
@@ -1636,7 +1764,8 @@ a.link-btn:hover{
  
 <script>
 const pageData = {
-  dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview · Thursday, March 19, 2026"],
+  dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview ·"],
+  finance:['Digital integration with University ERP Finance Module'],
   submissions:['My Submissions','All submitted work and current review status'],
   milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
   feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
@@ -1660,6 +1789,53 @@ function stab(tab,id){
   c.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   tab.classList.add('active');
   document.getElementById(id).classList.add('active');
+}
+// 1. The Main Navigation Function
+function showPage(pageId, saveHistory = true) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    
+    // Show the target page
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.style.display = 'block';
+        
+        // This is the EXACT line that tells the browser "Back" button to work
+        if (saveHistory) {
+            history.pushState({ id: pageId }, '', '#' + pageId);
+        }
+    }
+}
+
+// 2. The EXACT line to handle the browser's "Back" click
+window.onpopstate = (e) => {
+    if (e.state && e.state.id) {
+        showPage(e.state.id, false); // Go back without creating a new loop
+    } else {
+        showPage('page-dashboard', false); // Default return
+    }
+};
+
+// 3. Optional: Run this on load to check if the URL already has a #page-feedback
+window.onload = () => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) showPage(hash, false);
+};
+
+function toggleFinancePrivacy() {
+    const dataElements = document.querySelectorAll('.finance-data');
+    const masks = document.querySelectorAll('.privacy-mask');
+    const icon = document.getElementById('eye-icon');
+
+    dataElements.forEach(el => {
+        el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+    });
+
+    masks.forEach(m => {
+        m.style.display = (m.style.display === 'none') ? 'block' : 'none';
+    });
+
+    icon.innerText = (icon.innerText === '👁️') ? '🙈' : '👁️';
 }
 function openM(id){document.getElementById(id).classList.add('open')}
 function closeM(id){document.getElementById(id).classList.remove('open')}
