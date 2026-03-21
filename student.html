@@ -6,7 +6,8 @@
 <title>Student Dashboard — R.U</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
 <style>
-:root{--navy:#0A194E;
+:root{
+  --navy:#0A194E;
   --navy2:#0D2260;
   --amber:#FFC107;
   --amber2:#FFD54F;
@@ -25,35 +26,70 @@
   --blue:#1E7EDE;
   --blue-dim:rgba(30,126,222,0.1);
   --orange:#F57C00;
-  --color-lit: #4CAF50;
-  --color-meth: #2196F3;
-  --color-data: #FFC107;
   --orange-dim:rgba(245,124,0,0.1);
-  --sidebar:230px}
+  --sidebar-w:230px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:'Plus Jakarta Sans',sans-serif;
   background:var(--off);
+  background:var(--off);
   color:var(--text);
-  display:grid;
-  grid-template-columns:var(--sidebar) 1fr;
-  min-height:100vh}
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+  position:relative;
+}
 .sidebar{
   background:var(--navy);
-  display:flex;
+  display: flex ;
   flex-direction:column;
-  position:sticky;
-  top:0;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  width:var(--sidebar-w);
   height:100vh;
   overflow-y:auto;
-  z-index:50}
+  z-index:1000;
+  transition:transform 0.28s cubic-bezier(.4,0,.2,1);
+  transform:translateX(0);
+
+}
+.sidebar.collapsed{
+  transform:translateX(calc(-1 * var(--sidebar-w)));
+}
+
+@media(max-width:900px){
+  .sidebar{
+    transform:translateX(calc(-1 * var(--sidebar-w)));
+  }
+  .sidebar.mobile-open{
+    transform:translateX(0);
+    box-shadow:8px 0 32px rgba(0,0,0,0.35);
+  }
+  /* On mobile main never has a left margin */
+  main{
+    margin-left:0 !important;
+  }
+}
+.sidebar-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:998; /* below sidebar (1000) but above everything else */
+}
+.sidebar-overlay.visible{display:block;}
+
 .sidebar-logo{
   padding:1.4rem 1.25rem;
   border-bottom:1px solid rgba(255,255,255,0.08);
   display:flex;
   align-items:center;
   gap:0.65rem;
-  text-decoration:none}
+  text-decoration:none
+}
 .logo-badge{
   width:150px;
   height:50px;
@@ -83,7 +119,7 @@ body{
   color:rgb(255, 255, 255);
   padding:0 1.25rem;
   margin-bottom:0.25rem;
-  display:block
+  display:block;
 }
 .nav-item{
   display:flex;
@@ -165,11 +201,18 @@ body{
 .logout-btn:hover{
   background:var(--red-dim);
   color:var(--red)}
-main{
+
+main {
+  flex:1;
+  margin-left:var(--sidebar-w);
+  transition:margin-left 0.28s cubic-bezier(.4,0,.2,1);
   display:flex;
   flex-direction:column;
   min-height:100vh;
-  overflow-x:hidden}
+}
+body.sidebar-collapsed main {
+  margin-left: 0; /* This removes the white gap from your screenshot */
+}
 .topbar{
   background:var(--white);
   border-bottom:1px solid var(--border);
@@ -187,10 +230,43 @@ main{
   font-size:0.76rem;
   color:var(--muted);
   margin-top:0.1rem}
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+  }
+.mobile-toggle {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--navy);
+  color:white;
+  border:none;
+  padding:8px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:1.1rem;
+  transition:background 0.18s;
+  flex-shrink:0;
+}
+.mobile-toggle:hover{
+  background:var(--navy2);
+}
+.topbar-title{
+  font-size:1.18rem;
+  font-weight:800;
+  color:var(--navy)
+}
+.topbar-sub{
+  font-size:0.76rem;
+  color:var(--muted);
+  margin-top:0.1rem;
+}
 .topbar-right{
   display:flex;
   align-items:center;
-  gap:0.65rem}
+  gap:0.65rem;
+}
 .icon-btn{
   width:36px;
   height:36px;
@@ -203,6 +279,7 @@ main{
   font-size:0.95rem;
   transition:all 0.18s;
   position:relative}
+  
 .icon-btn:hover{
   border-color:var(--navy);
   background:var(--off)}
@@ -445,24 +522,22 @@ margin-bottom:0.3rem
 .svg-chart{
   width:100%}
   .pie-chart {
-  transform: rotate(-90deg); /* Essential to make slices start at 12 o'clock */
+  transform: rotate(-90deg); 
 }
 
-/* Optional: Make the slices look like a donut by making the stroke-width smaller */
 .pie-chart circle {
   transition: stroke-dasharray 0.3s ease;
 }
 .chart-text {
-    /* This ensures the text stays horizontal even if the circle is rotated */
     transform: rotate(90deg); 
     transform-origin: center;
 }
 
 .pie-number {
-    font-size: 7px; /* Scaled to fit the 42px viewbox */
+    font-size: 7px; 
     font-weight: 800;
     fill: #333;
-    text-anchor: middle; /* This is the "Center Align" for SVGs */
+    text-anchor: middle; 
     dominant-baseline: middle; 
 }
 
@@ -484,9 +559,9 @@ margin-bottom:0.3rem
     margin-right: 80px;
     margin-bottom: 10px;
 }
-/* Unique yellow top-bar for Finance only */
+
 .stat-card-finance {
-    position: relative; /* Required for the absolute line to stick to the top */
+    position: relative; 
     overflow: hidden;
 }
 
@@ -496,26 +571,24 @@ margin-bottom:0.3rem
     top: 0;
     left: 0;
     right: 0;
-    height: 4px; /* Slightly thicker for the Finance gate */
+    height: 4px; 
     background: var(--yellow);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.4s ease;
 }
 .stat-card-finance .stat-value.finance-data {
-    color: #ffffff; /* A clean success green */
+    color: #ffffff; 
     font-weight: 800;
 }
 .stat-card-finance:hover::before {
     transform: scaleX(1);
 }
 .stat-card-finance .stat-label {
-    color: #ffffff;
+    color: #FFC107;
     font-weight: bold;
 }
-.stat-value finance-data
-/* Unique CSS for the Finance Page */
-.finance-page-container {
+.stat-value finance-data.finance-page-container {
     padding: 2rem;
     background-color: #ffffff;
 }
@@ -528,15 +601,6 @@ margin-bottom:0.3rem
     font-size: 0.8rem;
 }
 
-.privacy-toggle {
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: transform 0.2s;
-}
-
-.privacy-toggle:hover {
-    transform: scale(1.2);
-}
 .legend-dot
 {width:9px;
   height:9px;
@@ -548,34 +612,7 @@ margin-bottom:0.3rem
   gap:0.4rem;
   font-size:0.72rem;
   color:var(--muted)}
-.bar-group{
-  display:flex;
-  align-items:flex-end;
-  gap:7px;height:130px;
-  border-bottom:1px solid var(--border)}
-.bar-col{flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0}
-.bar-fill{
-  width:100%;
-  border-radius:3px 3px 0 0;
-  cursor:pointer;
-  transition:opacity 0.2s}
-.bar-fill:hover{
-  opacity:0.8}
-.bar-lbl{
-  font-size:0.6rem;
-  color:var(--muted);
-  margin-top:0.3rem;
-  text-align:center;
-  line-height:1.2}
-.bar-val{
-  font-size:0.6rem;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:0.15rem}
+
 /* layout */
 .two-col{
   display:grid;
@@ -947,6 +984,39 @@ a.link-btn:hover{
   font-size:0.72rem;
   color:var(--muted)
 }
+/* Styling for the Finance Clearance Gate Alert */
+
+#finance-alert.alert-warning {
+    background-color: #0A194E; /* Deep Navy Background */
+    color: #ffffff;            /* White Text */
+    padding: 1.25rem;
+    border-radius: 8px;
+    border-left: 5px solid var(--yellow); /* Accent line to grab attention */
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(10, 25, 78, 0.15);
+}
+#finance-alert {
+    background-color: #0A194E !important; /* Force Navy Background */
+    color: #ffffff !important;            /* Force White Text */
+    padding: 1.25rem;
+    border-radius: 8px;
+    border-left: 5px solid #FFC107;      /* Using your --amber variable color */
+    margin-bottom: 1.5rem;
+    display: flex !important;            /* Force it to be visible */
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(10, 25, 78, 0.15);
+}
+#finance-alert strong {
+  color: #FFC107; /* Matches your Amber/Yellow theme */
+  margin-right: 5px;
+}
+
+#finance-alert .alert-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
 /* modal */
 .modal-overlay{
   position:fixed;
@@ -1048,6 +1118,82 @@ a.link-btn:hover{
   justify-content:flex-end;
   gap:0.65rem
 }
+.erp-status-card{
+  border:1px solid var(--border);border-radius:6px;padding:1.5rem;
+  margin-bottom:1.5rem;background:var(--white);
+}
+.erp-status-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;}
+.erp-status-title{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:0.2rem;}
+.erp-status-sub{font-size:0.75rem;color:var(--muted);}
+
+/* Status indicator strip */
+.erp-indicator{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.65rem 1rem;border-radius:5px;margin-bottom:1rem;
+  font-size:0.82rem;font-weight:600;
+}
+.erp-indicator.status-approved{background:var(--green-dim);color:var(--green);border:1px solid rgba(29,164,98,0.25);}
+.erp-indicator.status-pending{background:rgba(255,193,7,0.12);color:#b37f00;border:1px solid rgba(255,193,7,0.3);}
+.erp-indicator.status-returned{background:var(--red-dim);color:var(--red);border:1px solid rgba(229,57,53,0.25);}
+.erp-indicator.status-idle{background:var(--off2);color:var(--muted);border:1px solid var(--border);}
+
+.erp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-approved{background:var(--green);}
+.dot-pending{background:var(--amber);animation:pulse 1.4s infinite;}
+.dot-returned{background:var(--red);}
+.dot-idle{background:var(--muted);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Fee gate warning (outstanding balance) */
+.fee-gate-banner{
+  background:#fff8e1;border:1px solid #ffe082;border-left:4px solid var(--amber);
+  border-radius:4px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:0.9rem;align-items:flex-start;
+}
+.fee-gate-banner .gate-icon{font-size:1.3rem;flex-shrink:0;margin-top:0.05rem;}
+.fee-gate-banner .gate-body{flex:1;}
+.fee-gate-banner .gate-title{font-size:0.88rem;font-weight:700;color:#7c5800;margin-bottom:0.3rem;}
+.fee-gate-banner .gate-text{font-size:0.8rem;color:#7c5800;line-height:1.6;}
+.fee-gate-banner .gate-contact{font-size:0.77rem;margin-top:0.5rem;color:#7c5800;font-weight:600;}
+
+/* ERP response detail box */
+.erp-response-box{
+  background:var(--off);border:1px solid var(--border);border-radius:5px;padding:1rem 1.1rem;
+  margin-top:0.75rem;font-size:0.8rem;
+}
+.erp-response-row{display:flex;gap:1rem;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.erp-response-row:last-child{border-bottom:none;}
+.erp-key{color:var(--muted);font-weight:600;min-width:140px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;}
+.erp-val{color:var(--text);font-weight:500;}
+.erp-val.ref-code{font-family:monospace;background:rgba(10,25,78,0.06);padding:0.1rem 0.4rem;border-radius:3px;color:var(--navy);}
+
+/* Loading spinner */
+.erp-loading{
+  display:flex;align-items:center;gap:0.75rem;padding:1rem;
+  font-size:0.82rem;color:var(--muted);
+}
+.spinner{
+  width:18px;height:18px;border:2.5px solid var(--border);
+  border-top-color:var(--navy);border-radius:50%;
+  animation:spin 0.7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+.clearance-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.clearance-tile{
+  background:var(--white);border:1px solid var(--border);border-radius:5px;
+  padding:1rem 1.1rem;
+}
+.clearance-tile-label{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:0.4rem;}
+.clearance-tile-val{font-size:1.05rem;font-weight:800;color:var(--navy);}
+.clearance-tile-sub{font-size:0.7rem;color:var(--muted);margin-top:0.15rem;}
+
+.privacy-note{
+  background:rgba(30,126,222,0.04);border:1px solid rgba(30,126,222,0.15);
+  border-radius:4px;padding:0.75rem 1rem;margin-top:1rem;
+  display:flex;gap:0.6rem;align-items:flex-start;font-size:0.77rem;color:var(--muted);
+}
+
 /* notif panel */
 .notif-panel{
   position:fixed;
@@ -1096,10 +1242,19 @@ a.link-btn:hover{
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem}
 .section-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:700;color:var(--navy)}
 .section-sub{font-size:0.78rem;color:var(--muted);margin-top:0.2rem}
-@media(max-width:900px){body{grid-template-columns:1fr}.sidebar{display:none}.stats-grid{grid-template-columns:1fr 1fr}.charts-row,.two-col{grid-template-columns:1fr}}
+/* Ensure content stays beside sidebar on laptops */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .charts-row,.two-col{grid-template-columns:1fr}
+  .clearance-summary-grid{grid-template-columns:1fr 1fr;}
+  .topbar{padding:0.75rem 1rem;}
+  .content{padding:1.25rem 1rem;}
+  .wb-actions{flex-direction:column;gap:0.4rem;}
+}
 </style>
 </head>
 <body>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar">
   <a class="sidebar-logo" href="index.html">
     <div class="logo-badge">
@@ -1137,12 +1292,16 @@ a.link-btn:hover{
  
 <main>
   <div class="topbar">
-    <div>
-      <div class="topbar-title" id="tb-title">Welcome back, Sarah! 👋</div>
-      <div class="topbar-sub" id="tb-sub">
-    Here's your academic progress overview · <span id="current-date"></span>
-</div>
+    <div class="topbar-left">
+      <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="tb-title">Welcome back, Sarah! 👋</div>
+        <div class="topbar-sub" id="tb-sub">
+          Here's your academic progress overview · <span id="current-date"></span>
+        </div>
+      </div>
     </div>
+    
     <div class="topbar-right">
       <button class="icon-btn" onclick="toggleNotif()">🔔<span class="badge-dot"></span></button>
       <div class="user-chip">
@@ -1259,9 +1418,6 @@ a.link-btn:hover{
       <div class="stat-card stat-card-finance">
         <div class="stat-head">
           <div class="stat-label">FINANCE CLEARANCE</div>
-          <div class="privacy-toggle" onclick="toggleFinancePrivacy()">
-            <span id="eye-icon">👁️</span>
-          </div>
         </div>
         
         <div class="stat-value finance-data">Approved</div>
@@ -1419,48 +1575,191 @@ a.link-btn:hover{
       </div>
     </div>
     <!--FINANCE  -->
-    <div class="page" id="page-finance">
-      <div class="section-head">
-    <div>
-      <div class="section-title">Finance & Fee Clearance</div>
-      <div class="section-sub">Digital integration with University ERP Finance Module</div>
-    </div>
-    <button class="btn btn-primary" onclick="requestFinanceClearance()">🔄 Refresh Status</button>
-  </div>
+      <!-- ══════════════════════════════════════════
+       FINANCE PAGE — ERP Integration Showcase
+       ══════════════════════════════════════════ -->
+  <div class="page" id="page-finance">
 
-  <div id="finance-alert" class="alert alert-warning" style="display: none;">
-    <div class="alert-text">
-      <strong>Clearance Pending:</strong> Finance clearance is currently held due to an outstanding fee balance. 
-      Please contact the Finance Office to settle your account. [cite: 88]
+    <div class="section-head">
+      <div>
+        <div class="section-title">Finance & Fee Clearance</div>
+        <div class="section-sub">Digital integration with University ERP Finance Module — no office visits required</div>
+      </div>
+      <div style="display:flex;gap:0.65rem;align-items:center">
+        <!-- Student selector (demo) -->
+        <select class="form-select" id="demo-student-select" onchange="switchDemoStudent(this.value)" style="font-size:0.78rem;padding:0.4rem 0.7rem;width:auto">
+          <option value="cleared">Sarah Johnson (Fees Cleared)</option>
+          <option value="outstanding">Demo: Outstanding Balance</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="refresh-btn" onclick="requestFinanceClearance()">🔄 Request ERP Clearance</button>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-header"><div class="card-title">Active Clearance Requests</div></div>
-    <div class="card-body">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Document Type</th>
-            <th>Period</th>
-            <th>ERP Reference</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody id="finance-requests-table">
-          <tr>
-            <td>Quarterly Progress Report</td>
-            <td>Q1 2026</td>
-            <td><code id="erp-ref">FIN-2026-004</code></td>
-            <td><span class="pill pill-review">Awaiting ERP Response</span></td>
-            <td>2026-03-20</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- ── CLEARANCE SUMMARY TILES ── -->
+    <div class="clearance-summary-grid">
+      <div class="clearance-tile">
+        <div class="clearance-tile-label">Student</div>
+        <div class="clearance-tile-val" id="fin-student-name">Sarah Johnson</div>
+        <div class="clearance-tile-sub">PG/2024/001 · PhD CS</div>
+      </div>
+      <div class="clearance-tile">
+        <div class="clearance-tile-label">Current Period</div>
+        <div class="clearance-tile-val">Q1 2026</div>
+        <div class="clearance-tile-sub">Jan – Mar 2026</div>
+      </div>
+      <div class="clearance-tile">
+        <div class="clearance-tile-label">Last Clearance</div>
+        <div class="clearance-tile-val" id="fin-last-clearance">Q4 2025</div>
+        <div class="clearance-tile-sub" id="fin-last-date">Approved 15 Jan 2026</div>
+      </div>
     </div>
-  </div>
-</div>
+
+    <!-- ── FEE GATE BANNER (hidden by default, shown when outstanding) ── -->
+    <div class="fee-gate-banner" id="fee-gate-banner" style="display:none">
+      <div class="gate-icon">⚠️</div>
+      <div class="gate-body">
+        <div class="gate-title">Finance Clearance Pending — Outstanding Fee Balance</div>
+        <div class="gate-text">
+          The University ERP Finance Module has indicated that your account has an outstanding balance for the current period. Finance clearance cannot be granted until this is resolved. Your quarterly report will remain in the approval chain until Finance clearance is confirmed.
+        </div>
+        <div class="gate-contact">📞 Contact Finance Office: finance@university.edu · +254 20 123 4567 · Room B2, Admin Block</div>
+      </div>
+    </div>
+
+    <!-- ── ERP STATUS CARD ── -->
+    <div class="erp-status-card">
+      <div class="erp-status-header">
+        <div>
+          <div class="erp-status-title">ERP Finance Module — Clearance Status</div>
+          <div class="erp-status-sub">Live connection to University ERP · Reference updated on each request</div>
+        </div>
+        <div id="erp-last-checked" style="font-size:0.72rem;color:var(--muted)">Not yet checked</div>
+      </div>
+
+      <!-- Status indicator -->
+      <div class="erp-indicator status-idle" id="erp-indicator">
+        <div class="erp-dot dot-idle" id="erp-dot"></div>
+        <span id="erp-status-text">Click "Request ERP Clearance" to check current status</span>
+      </div>
+
+      <!-- Loading state -->
+      <div class="erp-loading" id="erp-loading" style="display:none">
+        <div class="spinner"></div>
+        <span>Sending request to ERP Finance Module…</span>
+      </div>
+
+      <!-- Response detail box -->
+      <div class="erp-response-box" id="erp-response-box" style="display:none">
+        <div class="erp-response-row">
+          <span class="erp-key">ERP Reference</span>
+          <span class="erp-val ref-code" id="erp-ref-val">—</span>
+        </div>
+        <div class="erp-response-row">
+          <span class="erp-key">Status</span>
+          <span class="erp-val" id="erp-status-val">—</span>
+        </div>
+        <div class="erp-response-row">
+          <span class="erp-key">Document Type</span>
+          <span class="erp-val">Quarterly Progress Report — Q1 2026</span>
+        </div>
+        <div class="erp-response-row">
+          <span class="erp-key">Finance Officer</span>
+          <span class="erp-val" id="erp-officer-val">—</span>
+        </div>
+        <div class="erp-response-row">
+          <span class="erp-key">Clearance Date</span>
+          <span class="erp-val" id="erp-clearance-date">—</span>
+        </div>
+        <div class="erp-response-row" id="erp-comments-row" style="display:none">
+          <span class="erp-key">ERP Comments</span>
+          <span class="erp-val" id="erp-comments-val" style="color:var(--orange);">—</span>
+        </div>
+      </div>
+
+      <!-- Privacy note -->
+      <div class="privacy-note">
+        🔒 <span>Your financial balance and fee details are held securely in the University system and are never shared with supervisors, panel members, or administrators through this portal. Only clearance status and reference numbers are displayed here.</span>
+      </div>
+    </div>
+   
+
+    <!-- ── ACTIVE CLEARANCE REQUESTS TABLE ── -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="card-header"><div class="card-title">Clearance Request History</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Document Type</th>
+              <th>Period</th>
+              <th>ERP Reference</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Finance Officer</th>
+            </tr>
+          </thead>
+          <tbody id="clearance-history-tbody">
+            <tr>
+              <td class="td-title">Quarterly Progress Report</td>
+              <td class="td-muted">Q4 2025</td>
+              <td><code>FIN-2025-112</code></td>
+              <td><span class="pill pill-approved">Approved</span></td>
+              <td class="td-muted">15 Jan 2026</td>
+              <td class="td-muted">Ms. Grace Otieno</td>
+            </tr>
+            <tr>
+              <td class="td-title">Quarterly Progress Report</td>
+              <td class="td-muted">Q3 2025</td>
+              <td><code>FIN-2025-088</code></td>
+              <td><span class="pill pill-approved">Approved</span></td>
+              <td class="td-muted">08 Oct 2025</td>
+              <td class="td-muted">Ms. Grace Otieno</td>
+            </tr>
+            <tr id="current-request-row" style="display:none">
+              <td class="td-title">Quarterly Progress Report</td>
+              <td class="td-muted">Q1 2026</td>
+              <td><code id="hist-ref">—</code></td>
+              <td id="hist-status-cell"><span class="pill pill-pending">Pending</span></td>
+              <td class="td-muted" id="hist-date">—</td>
+              <td class="td-muted" id="hist-officer">Awaiting ERP</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── GRADUATION CLEARANCE SECTION ── -->
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">🎓 Graduation Clearance</div><div class="card-sub">Final ERP integration point — all academic and finance approvals required</div></div>
+        <span class="pill pill-pending">Not Yet Eligible</span>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info" style="margin-bottom:1rem">
+          <div class="alert-text">Graduation clearance can only be initiated after: all academic approvals (supervisors, school, PG Dean), all correction submissions complete, the external examiner's report received, and Finance clearance confirming all fees are settled. The ERP Finance Module issues the final digital clearance certificate.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem">
+          <div style="background:var(--green-dim);border:1px solid rgba(29,164,98,0.2);border-radius:4px;padding:0.75rem;text-align:center">
+            <div style="font-size:1.1rem;margin-bottom:0.25rem">✓</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--green)">Academic Progress</div>
+          </div>
+          <div style="background:var(--off2);border:1px solid var(--border);border-radius:4px;padding:0.75rem;text-align:center">
+            <div style="font-size:1.1rem;margin-bottom:0.25rem">⏳</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted)">All Corrections Done</div>
+          </div>
+          <div style="background:var(--off2);border:1px solid var(--border);border-radius:4px;padding:0.75rem;text-align:center">
+            <div style="font-size:1.1rem;margin-bottom:0.25rem">⏳</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted)">Examiner Report</div>
+          </div>
+          <div style="background:var(--off2);border:1px solid var(--border);border-radius:4px;padding:0.75rem;text-align:center">
+            <div style="font-size:1.1rem;margin-bottom:0.25rem">🏦</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted)">ERP Finance Clearance</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-finance -->
  
     <!-- SUBMISSIONS PAGE -->
     <div class="page" id="page-submissions">
@@ -1790,6 +2089,114 @@ function stab(tab,id){
   tab.classList.add('active');
   document.getElementById(id).classList.add('active');
 }
+// Mock ERP data
+const erpData = {
+  cleared: {
+    reference: 'FIN-2026-' + Math.floor(Math.random() * 900 + 100),
+    status: 'approved',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: new Date().toISOString(),
+  },
+  outstanding: {
+    reference: 'FIN-2026-HOLD',
+    status: 'returned',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: null,
+    comments: 'Outstanding fee balance detected. Please settle fees before clearance can be granted.'
+  }
+};
+
+function requestFinanceClearance() {
+  const studentType = document.getElementById('demo-student-select').value;
+  const loading     = document.getElementById('erp-loading');
+  const btn         = document.getElementById('refresh-btn');
+
+  // Show loading
+  loading.style.display = 'flex';
+  btn.disabled = true;
+  btn.textContent = '⏳ Checking ERP…';
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('pending', 'Awaiting ERP Finance Module response…');
+
+  // Simulate ERP delay
+  setTimeout(() => {
+    loading.style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = '🔄 Request ERP Clearance';
+    document.getElementById('erp-last-checked').textContent = 'Last checked: ' + new Date().toLocaleTimeString();
+
+    const resp = erpData[studentType];
+
+    if (resp.status === 'approved') {
+      setIndicator('approved', '✓ Finance Clearance Approved — ERP reference recorded');
+      document.getElementById('fee-gate-banner').style.display = 'none';
+      document.getElementById('erp-comments-row').style.display = 'none';
+    } else {
+      setIndicator('returned', '✗ Clearance Returned — Outstanding fee balance');
+      document.getElementById('fee-gate-banner').style.display  = 'flex';
+      document.getElementById('erp-comments-row').style.display = 'flex';
+      document.getElementById('erp-comments-val').textContent   = resp.comments;
+    }
+
+    // Fill response box
+    document.getElementById('erp-ref-val').textContent        = resp.reference;
+    document.getElementById('erp-status-val').textContent     = resp.status === 'approved' ? 'Approved ✓' : 'Returned ✗';
+    document.getElementById('erp-status-val').style.color     = resp.status === 'approved' ? 'var(--green)' : 'var(--red)';
+    document.getElementById('erp-officer-val').textContent    = resp.finance_officer_name;
+    document.getElementById('erp-clearance-date').textContent = resp.clearance_date ? new Date(resp.clearance_date).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : 'Pending';
+    document.getElementById('erp-response-box').style.display = 'block';
+
+    // Show history row
+    document.getElementById('current-request-row').style.display = '';
+    document.getElementById('hist-ref').textContent     = resp.reference;
+    document.getElementById('hist-status-cell').innerHTML = resp.status === 'approved'
+      ? '<span class="pill pill-approved">Approved</span>'
+      : '<span class="pill pill-revision">Returned</span>';
+    document.getElementById('hist-date').textContent    = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    document.getElementById('hist-officer').textContent = resp.finance_officer_name;
+
+  }, 2200);
+}
+
+function setIndicator(type, text) {
+  const ind = document.getElementById('erp-indicator');
+  const dot = document.getElementById('erp-dot');
+  const txt = document.getElementById('erp-status-text');
+  ind.className = 'erp-indicator status-' + type;
+  dot.className = 'erp-dot dot-' + type;
+  txt.textContent = text;
+}
+
+function switchDemoStudent(val) {
+  const name = val === 'cleared' ? 'Sarah Johnson' : 'Demo Student (Outstanding)';
+  document.getElementById('fin-student-name').textContent = name;
+  // Reset the panel when switching
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('idle', 'Click "Request ERP Clearance" to check current status');
+  document.getElementById('erp-last-checked').textContent = 'Not yet checked';
+}
+
+function formatDate(iso) {
+  if (!iso) return 'Pending';
+  return new Date(iso).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+}
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const main = document.querySelector('main');
+
+    if (window.innerWidth <= 900) {
+        // Mobile: slide sidebar over content
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('visible');
+    } else {
+        // Desktop: collapse sidebar and close the gap in main
+        sidebar.classList.toggle('collapsed');
+        main.style.marginLeft = sidebar.classList.contains('collapsed') ? '0' : 'var(--sidebar-w)';
+    }
+}
 // 1. The Main Navigation Function
 function showPage(pageId, saveHistory = true) {
     // Hide all pages
@@ -1800,43 +2207,34 @@ function showPage(pageId, saveHistory = true) {
     if (target) {
         target.style.display = 'block';
         
-        // This is the EXACT line that tells the browser "Back" button to work
+        
         if (saveHistory) {
             history.pushState({ id: pageId }, '', '#' + pageId);
         }
     }
+    if (pageId === 'page-finance') {
+    const alertBox = document.getElementById('finance-alert');
+    
+    // In a real demo, this would be triggered by your Mock ERP response
+    // For now, we manually show it to demonstrate the 'Fee Clearance Gate'
+    alertBox.style.display = 'flex'; 
+}
 }
 
-// 2. The EXACT line to handle the browser's "Back" click
 window.onpopstate = (e) => {
     if (e.state && e.state.id) {
-        showPage(e.state.id, false); // Go back without creating a new loop
+        showPage(e.state.id, false); 
     } else {
-        showPage('page-dashboard', false); // Default return
+        showPage('page-dashboard', false); 
     }
 };
 
-// 3. Optional: Run this on load to check if the URL already has a #page-feedback
 window.onload = () => {
     const hash = window.location.hash.replace('#', '');
     if (hash) showPage(hash, false);
 };
 
-function toggleFinancePrivacy() {
-    const dataElements = document.querySelectorAll('.finance-data');
-    const masks = document.querySelectorAll('.privacy-mask');
-    const icon = document.getElementById('eye-icon');
 
-    dataElements.forEach(el => {
-        el.style.display = (el.style.display === 'none') ? 'block' : 'none';
-    });
-
-    masks.forEach(m => {
-        m.style.display = (m.style.display === 'none') ? 'block' : 'none';
-    });
-
-    icon.innerText = (icon.innerText === '👁️') ? '🙈' : '👁️';
-}
 function openM(id){document.getElementById(id).classList.add('open')}
 function closeM(id){document.getElementById(id).classList.remove('open')}
 function bgClose(e,id){if(e.target===e.currentTarget)closeM(id)}
