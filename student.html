@@ -1418,6 +1418,9 @@ a.link-btn:hover{
       <div class="stat-card stat-card-finance">
         <div class="stat-head">
           <div class="stat-label">FINANCE CLEARANCE</div>
+          <div class="privacy-toggle" onclick="toggleFinancePrivacy()">
+            <span id="eye-icon">👁️</span>
+          </div>
         </div>
         
         <div class="stat-value finance-data">Approved</div>
@@ -2063,8 +2066,8 @@ a.link-btn:hover{
  
 <script>
 const pageData = {
-  dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview ·"],
-  finance:['Digital integration with University ERP Finance Module'],
+  dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview"],
+  finance:['Finance & Fee Clearance','Digital integration with University ERP Finance Module'],
   submissions:['My Submissions','All submitted work and current review status'],
   milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
   feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
@@ -2178,6 +2181,21 @@ function switchDemoStudent(val) {
   document.getElementById('erp-last-checked').textContent = 'Not yet checked';
 }
 
+function toggleFinancePrivacy() {
+  const dataElements = document.querySelectorAll('.finance-data');
+  const masks = document.querySelectorAll('.privacy-mask');
+  const icon = document.getElementById('eye-icon');
+  const isMasked = dataElements.length > 0 && dataElements[0].style.display === 'none';
+
+  dataElements.forEach(el => {
+    el.style.display = isMasked ? 'block' : 'none';
+  });
+  masks.forEach(m => {
+    m.style.display = isMasked ? 'none' : 'block';
+  });
+  if (icon) icon.textContent = isMasked ? '👁️' : '🙈';
+}
+
 function formatDate(iso) {
   if (!iso) return 'Pending';
   return new Date(iso).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
@@ -2212,13 +2230,11 @@ function showPage(pageId, saveHistory = true) {
             history.pushState({ id: pageId }, '', '#' + pageId);
         }
     }
+    // Keep navigation resilient even if optional banners are absent.
     if (pageId === 'page-finance') {
-    const alertBox = document.getElementById('finance-alert');
-    
-    // In a real demo, this would be triggered by your Mock ERP response
-    // For now, we manually show it to demonstrate the 'Fee Clearance Gate'
-    alertBox.style.display = 'flex'; 
-}
+      const alertBox = document.getElementById('finance-alert');
+      if (alertBox) alertBox.style.display = 'flex';
+    }
 }
 
 window.onpopstate = (e) => {

@@ -13,23 +13,123 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(
 .sidebar{width:var(--sidebar);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
 .sidebar-logo{display:flex;align-items:center;gap:.75rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
 .logo-mark{width:34px;height:34px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.logo-text{font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.04em}.logo-text span{color:var(--amber)}
-.nav-section{padding:.75rem 0}
-.nav-section-title{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:.4rem 1.25rem;display:block}
-.nav-link{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.25rem;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;border-left:2.5px solid transparent;text-decoration:none}
-.nav-link:hover{color:#fff;background:rgba(255,255,255,.06)}
-.nav-link.active{color:#fff;background:rgba(255,255,255,.09);border-left-color:var(--amber)}
-.nav-link .ni{width:17px;text-align:center;font-size:.88rem;flex-shrink:0}
-.sidebar-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.07)}
-.user-mini{display:flex;align-items:center;gap:.65rem}
-.user-av{width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
-.user-mini-name{font-size:.78rem;font-weight:700;color:#fff;line-height:1.2}
-.user-mini-role{font-size:.65rem;color:rgba(255,255,255,.38)}
-.logout-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.28);font-size:.9rem;cursor:pointer;padding:.25rem}
-.logout-btn:hover{color:var(--red)}
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
-.topbar{height:var(--topbar);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0 1.75rem;position:sticky;top:0;z-index:50}
-.topbar-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+
+.logo-badge{
+  width:150px;
+  height:50px;
+  background:white;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px;
+}
+.nav-section{
+  padding:.75rem 0}
+.nav-section-title{
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgb(255, 255, 255);
+  padding:.4rem 1.25rem .4rem;
+  display:block;
+  margin-left: 10px;
+}
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:1.05rem .25rem;
+  color:rgb(254, 254, 254);
+  font-size:.92rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .18s;
+  border-left:2.5px solid transparent;
+  text-decoration:none;
+  margin-left: 10px;
+}
+
+.nav-link:hover{
+  color:#FFC107;
+  background:rgba(255,255,255,.06)}
+.nav-link.active{
+  color:#FFC107;
+  background:rgba(255,255,255,.09);
+  border-left-color:var(--amber)}
+.nav-link .ni{
+  width:17px;
+  text-align:center;
+  font-size:.88rem;
+  flex-shrink:0}
+.sidebar-footer{
+  margin-top:auto;
+  padding:1rem 1.25rem;
+  border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{
+  display:flex;
+  align-items:center;
+  gap:.65rem}
+.user-av{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:var(--amber);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  font-weight:800;
+  flex-shrink:0}
+.user-mini-name{
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  line-height:1.2}
+.user-mini-role{
+  font-size:.65rem;
+  color:rgba(255,255,255,.38)}
+.logout-btn{
+  margin-left:auto;
+  background:none;
+  border:none;
+  color:rgb(255, 255, 255);
+  font-size:.9rem;
+  cursor:pointer;
+  padding:.25rem}
+.logout-btn:hover{
+  color:var(--red)}
+.main{
+  margin-left:var(--sidebar);
+  flex:1;
+  display:flex;
+  flex-direction:column}
+.topbar{
+  height:var(--topbar);
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:0 1.75rem;
+  position:sticky;
+  top:0;z-index:50}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  margin-left:auto}
 .tb-notif{position:relative;width:34px;height:34px;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}
 .tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
 .tb-pill{display:flex;align-items:center;gap:.5rem;background:var(--off);border:1px solid var(--border);padding:.3rem .75rem;cursor:pointer}
@@ -157,7 +257,12 @@ select.form-control{appearance:none}
 <body>
  
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark">🎓</div><div class="logo-text">PAP<span>MS</span></div></div>
+  <a class="sidebar-logo" href="index.html">
+    <div class="logo-badge">
+      <img src="assets/R.U logo.png" alt="R.U logo" class="logo-img">
+    </div>
+    
+  </a>
   <nav class="nav-section">
     <span class="nav-section-title">Executive</span>
     <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
@@ -175,7 +280,7 @@ select.form-control{appearance:none}
     <div class="user-mini">
       <div class="user-av">RH</div>
       <div><div class="user-mini-name">Prof. Robert Harrison</div><div class="user-mini-role">Dean of Faculty</div></div>
-      <button class="logout-btn" onclick="window.location.href='login.html'">⏻</button>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button>
     </div>
   </div>
 </aside>
