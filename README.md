@@ -61,10 +61,17 @@ All core features and tasks have been broken down into GitHub Issues, labelled, 
 ### Backend (Django)
 - Set up models for:
   - `User`, `Student`, `PipelineStage`, `Milestone`, `StudentProgress`,  
-    `Submission`, `Feedback`, `Correction`, `CorrectionItem`, `Notification`
+    `Submission`, `Feedback`, `Correction`, `CorrectionItem`, `Notification`, `PresentationBooking`
 - Implemented **student pipeline state machine** to track progress from Concept Note → Graduation.
-- Built a **seed command (`seed_rongo_data`)** to populate users, students, milestones, submissions, feedback, corrections, and notifications.
+- Built a **seed command (`seed_rongo_data`)** to populate users, students, milestones, submissions, feedback, corrections, notifications, and **presentation bookings**.
 - Integrated role-based access and protected views.
+- Added **presentation booking system**:
+  - Students can book presentations at least **7 days in advance**
+  - Each booking has a status: `pending`, `approved`, or `rejected`
+  - Linked bookings to student dashboard dynamically
+- Added **logout functionality**:
+  - Preserves existing dashboard styling
+  - Logs out users and redirects to login page
 
 ### Frontend / Dashboard
 - Developed **student dashboard** showing:
@@ -73,16 +80,19 @@ All core features and tasks have been broken down into GitHub Issues, labelled, 
   - Notifications (latest 5)
   - Progress tracker with dynamic pipeline steps
   - Pending tasks and tasks due this week
-- Connected dashboard with backend via Django views and templates.
+  - **Upcoming presentation bookings** (sortable by date)
+  - Modal form for booking presentations
+- Logout button integrated seamlessly with dashboard style
+- Connected dashboard with backend via Django views and templates
 
 ### AI Module
-- Correction pipeline for parsing AI-generated corrections.
-- Linking `Correction` and `CorrectionItem` with student submissions.
-- Basic notifications triggered for corrections.
+- Correction pipeline for parsing AI-generated corrections
+- Linking `Correction` and `CorrectionItem` with student submissions
+- Basic notifications triggered for corrections
 
 ### Notifications System
-- Created model and backend logic for sending notifications to users.
-- Seeded initial notifications upon database setup.
+- Created model and backend logic for sending notifications to users
+- Seeded initial notifications upon database setup
 
 ---
 
