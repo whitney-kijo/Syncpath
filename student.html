@@ -1267,6 +1267,7 @@ a.link-btn:hover{
     <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">◈</span> Dashboard</div>
     <div class="nav-item" onclick="nav('finance',this)"><span class="ni">💰</span>Finance</div>
     <div class="nav-item" onclick="nav('submissions',this)"><span class="ni">📄</span> My Submissions</div>
+    <div class="nav-item" onclick="nav('corrections',this)"><span class="ni">✅</span> Corrections Checklist <span class="nav-badge" id="corrections-badge">5</span></div>
     <div class="nav-item" onclick="nav('milestones',this)"><span class="ni">🎯</span> Milestones</div>
     <div class="nav-item" onclick="nav('feedback',this)"><span class="ni">💬</span> Feedback <span class="nav-badge">2</span></div>
   </div>
@@ -1418,9 +1419,7 @@ a.link-btn:hover{
       <div class="stat-card stat-card-finance">
         <div class="stat-head">
           <div class="stat-label">FINANCE CLEARANCE</div>
-          <div class="privacy-toggle" onclick="toggleFinancePrivacy()">
-            <span id="eye-icon">👁️</span>
-          </div>
+  
         </div>
         
         <div class="stat-value finance-data">Approved</div>
@@ -1578,6 +1577,172 @@ a.link-btn:hover{
       </div>
     </div>
     <!--FINANCE  -->
+    <!-- CORRECTIONS CHECKLIST PAGE -->
+<div class="page" id="page-corrections">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Corrections Checklist ✅</div>
+      <div class="section-sub">Issued by Prof. A. Patel (Seminar Chair) · Validated from seminar minutes · 21 March 2026</div>
+    </div>
+  </div>
+
+  <!-- Alert banner -->
+  <div class="alert alert-warning" id="corrections-alert" style="margin-bottom:1.5rem">
+    <div class="alert-text">
+      <strong>Action Required:</strong> You have <strong id="corrections-remaining">5</strong> outstanding corrections from your Proposal Seminar (Stage 3). Address all items to unlock supervisor sign-off. Deadline: <strong>21 April 2026</strong>.
+    </div>
+  </div>
+
+  <!-- Context strip -->
+  <div style="background:var(--navy);padding:1.1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,193,7,.1),transparent 70%)"></div>
+    <span style="font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,193,7,.18);color:var(--amber);padding:.3rem .75rem;flex-shrink:0">Stage 3 · School Seminar</span>
+    <div style="position:relative">
+      <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:.15rem">Proposal Presentation — Corrections Issued</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.55);display:flex;gap:1rem;flex-wrap:wrap">
+        <span>📅 21 March 2026</span>
+        <span>🎯 Assessment Score: 78%</span>
+        <span>👤 Chair: Prof. A. Patel</span>
+        <span>📋 Resubmit by: 21 April 2026</span>
+      </div>
+    </div>
+    <div style="margin-left:auto;position:relative">
+      <span class="pill pill-pending" style="font-size:.68rem;padding:.3rem .8rem" id="corrections-status-pill">⏳ Corrections Pending</span>
+    </div>
+  </div>
+
+  <!-- Progress overview cards -->
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.5rem">
+    <div class="stat-card sc-red">
+      <div class="stat-head"><div class="stat-label">Critical</div><div class="stat-icon si-red">🔴</div></div>
+      <div class="stat-value" id="cc-stat-critical" style="color:var(--red)">0</div>
+      <div class="stat-meta" id="cc-sub-critical">0 of 2 done</div>
+    </div>
+    <div class="stat-card sc-amber" style="--after-color:var(--orange)">
+      <div class="stat-head"><div class="stat-label">Major</div><div class="stat-icon si-amber">🟠</div></div>
+      <div class="stat-value" id="cc-stat-major" style="color:var(--orange)">0</div>
+      <div class="stat-meta" id="cc-sub-major">0 of 2 done</div>
+    </div>
+    <div class="stat-card sc-blue">
+      <div class="stat-head"><div class="stat-label">Minor</div><div class="stat-icon si-blue">🔵</div></div>
+      <div class="stat-value" id="cc-stat-minor" style="color:var(--blue)">0</div>
+      <div class="stat-meta" id="cc-sub-minor">0 of 1 done</div>
+    </div>
+    <div class="stat-card sc-navy">
+      <div class="stat-head"><div class="stat-label">Total Done</div><div class="stat-icon si-navy">✅</div></div>
+      <div class="stat-value" id="cc-stat-total">0</div>
+      <div class="stat-meta" id="cc-sub-total">0 of 5 complete</div>
+    </div>
+  </div>
+
+  <!-- Overall progress bar -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="padding:1rem 1.4rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap">
+      <div style="font-size:.82rem;font-weight:700;color:var(--navy);min-width:120px;flex-shrink:0">Overall Progress</div>
+      <div style="flex:1;min-width:150px">
+        <div style="height:10px;background:var(--off2);overflow:hidden">
+          <div id="cc-progress-fill" style="height:100%;background:var(--navy);width:0%;transition:width .6s cubic-bezier(.4,0,.2,1)"></div>
+        </div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem" id="cc-progress-status">Complete all items to unlock supervisor sign-off</div>
+      </div>
+      <div style="font-size:.9rem;font-weight:800;color:var(--navy);min-width:42px;text-align:right" id="cc-progress-pct">0%</div>
+    </div>
+  </div>
+
+  <!-- Checklist card -->
+  <div class="card" id="cc-checklist-card" style="margin-bottom:1.5rem">
+    <div class="card-header">
+      <div>
+        <div class="card-title">📋 Validated Corrections — Action Required</div>
+        <div class="card-sub">Tick each item once addressed · Add notes to document your changes</div>
+      </div>
+      <span style="font-size:.72rem;color:var(--muted)" id="cc-progress-text">0 / 5 addressed</span>
+    </div>
+
+    <!-- Critical -->
+    <div id="cc-section-critical">
+      <div style="padding:.65rem 1.4rem .25rem">
+        <span style="font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .75rem;background:var(--red-dim);color:var(--red);display:inline-flex;align-items:center;gap:.4rem">🔴 Critical — Must Fix Before Resubmission</span>
+      </div>
+    </div>
+
+    <!-- Major -->
+    <div id="cc-section-major">
+      <div style="padding:.65rem 1.4rem .25rem">
+        <span style="font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .75rem;background:var(--orange-dim);color:var(--orange);display:inline-flex;align-items:center;gap:.4rem">🟠 Major — Required for Advancement</span>
+      </div>
+    </div>
+
+    <!-- Minor -->
+    <div id="cc-section-minor">
+      <div style="padding:.65rem 1.4rem .25rem">
+        <span style="font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem .75rem;background:var(--blue-dim);color:var(--blue);display:inline-flex;align-items:center;gap:.4rem">🔵 Minor — Complete Before Final Submission</span>
+      </div>
+    </div>
+
+    <!-- Sign-off gate (locked) -->
+    <div id="cc-signoff-gate" style="background:var(--navy);padding:1.5rem;text-align:center;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-30px;top:-30px;width:150px;height:150px;background:radial-gradient(circle,rgba(255,193,7,.1),transparent 70%)"></div>
+      <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:.35rem;position:relative">🔒 Supervisor Sign-Off — Locked</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:1rem;position:relative">Complete all <span id="cc-gate-remaining">5</span> correction items to request supervisor validation</div>
+      <div style="font-size:.72rem;color:rgba(255,193,7,.8);background:rgba(255,193,7,.1);padding:.5rem 1rem;display:inline-flex;align-items:center;gap:.4rem;position:relative">⏳ <span id="cc-gate-msg">5 items remaining before this unlocks</span></div>
+    </div>
+
+    <!-- Sign-off unlocked -->
+    <div class="card-footer" id="cc-signoff-unlocked" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--green)">✅ All corrections addressed!</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:.15rem">You can now request supervisor sign-off to advance to Stage 4</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="alert('Checklist PDF downloaded')">📄 Export</button>
+          <button class="btn btn-primary btn-sm" onclick="ccRequestSignoff()">📨 Request Supervisor Sign-Off →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sent confirmation -->
+  <div id="cc-complete-banner" style="display:none;background:var(--green);padding:1.5rem;text-align:center;margin-bottom:1.5rem">
+    <div style="font-size:2rem;margin-bottom:.5rem">🎉</div>
+    <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.3rem">Sign-Off Request Sent to Dr. Michael Chen</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.75)">Your supervisor has been notified. Once they validate your corrections, you will advance to Stage 4.</div>
+  </div>
+
+  <!-- How it works -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">ℹ️ How the Corrections Process Works</div></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center">
+        <div style="padding:.85rem;border:1px solid var(--border);position:relative">
+          <div style="font-size:1.2rem;margin-bottom:.4rem">📋</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.2rem">Corrections Issued</div>
+          <div style="font-size:.68rem;color:var(--muted)">Chair extracts & validates corrections from seminar minutes via AI</div>
+          <div style="position:absolute;top:50%;right:-8px;transform:translateY(-50%);font-size:.7rem;color:var(--soft);background:#fff;padding:.1rem">▶</div>
+        </div>
+        <div style="padding:.85rem;border:1px solid var(--navy);background:rgba(10,25,78,.03);position:relative">
+          <div style="font-size:1.2rem;margin-bottom:.4rem">✅</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.2rem">You Address Each Item</div>
+          <div style="font-size:.68rem;color:var(--muted)">Tick each correction as you complete it · Add notes</div>
+          <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--amber);font-size:.55rem;font-weight:800;padding:.15rem .45rem;letter-spacing:.05em">YOU ARE HERE</div>
+          <div style="position:absolute;top:50%;right:-8px;transform:translateY(-50%);font-size:.7rem;color:var(--soft);background:#fff;padding:.1rem">▶</div>
+        </div>
+        <div style="padding:.85rem;border:1px solid var(--border);position:relative">
+          <div style="font-size:1.2rem;margin-bottom:.4rem">🔏</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.2rem">Supervisor Sign-Off</div>
+          <div style="font-size:.68rem;color:var(--muted)">Your supervisor validates all corrections were adequately addressed</div>
+          <div style="position:absolute;top:50%;right:-8px;transform:translateY(-50%);font-size:.7rem;color:var(--soft);background:#fff;padding:.1rem">▶</div>
+        </div>
+        <div style="padding:.85rem;border:1px solid var(--border)">
+          <div style="font-size:1.2rem;margin-bottom:.4rem">🚀</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.2rem">Stage Advances</div>
+          <div style="font-size:.68rem;color:var(--muted)">Pipeline automatically moves you to Stage 4: Data Collection Approval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
       <!-- ══════════════════════════════════════════
        FINANCE PAGE — ERP Integration Showcase
        ══════════════════════════════════════════ -->
@@ -2068,6 +2233,7 @@ a.link-btn:hover{
 const pageData = {
   dashboard:['Welcome back, Sarah! 👋',"Here's your academic progress overview"],
   finance:['Finance & Fee Clearance','Digital integration with University ERP Finance Module'],
+  corrections:['Corrections Checklist','Address all items to unlock supervisor sign-off'],
   submissions:['My Submissions','All submitted work and current review status'],
   milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
   feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
@@ -2075,6 +2241,7 @@ const pageData = {
   reports:['Academic Reports','Progress reports and performance summaries'],
   schedule:['Schedule','Upcoming meetings, deadlines and events'],
   settings:['Account Settings','Manage your profile and preferences'],
+  
 };
 function nav(id, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -2255,6 +2422,165 @@ function openM(id){document.getElementById(id).classList.add('open')}
 function closeM(id){document.getElementById(id).classList.remove('open')}
 function bgClose(e,id){if(e.target===e.currentTarget)closeM(id)}
 function toggleNotif(){document.getElementById('notif-panel').classList.toggle('open')}
+// ── CORRECTIONS CHECKLIST ──
+const CC_DEFAULTS = [
+  { id:1, urgency:'critical', text:'Literature Review (Chapter 2) must be expanded to include post-2022 publications in wearable health monitoring, specifically Kumar et al. (2023) and Zhang et al. (2024).', category:'Literature Review · Section 2', done:false },
+  { id:2, urgency:'critical', text:'A formal statistical power analysis must be conducted and documented in Section 3.2 to justify the proposed sample size of 80 participants.', category:'Methodology · Section 3.2', done:false },
+  { id:3, urgency:'major',    text:'The theoretical framework in Section 2.4 must be strengthened — the connection between the Technology Acceptance Model and the IoT sensor architecture needs fuller development.', category:'Theoretical Framework · Section 2.4', done:false },
+  { id:4, urgency:'major',    text:'All figures and tables must include descriptive captions. Currently only Figure 1 has a proper caption.', category:'Presentation Quality · All Chapters', done:false },
+  { id:5, urgency:'minor',    text:'Variable naming notation in Section 3.3 is inconsistent throughout. Standardise all variable names before resubmission.', category:'Statistical Analysis · Section 3.3', done:false },
+];
+
+let ccCorrections = [];
+const ccNotes = {};
+
+function ccInit(){
+  try {
+    const stored = localStorage.getItem('papms_corrections');
+    ccCorrections = stored ? JSON.parse(stored) : CC_DEFAULTS.map(c=>({...c}));
+  } catch(e) {
+    ccCorrections = CC_DEFAULTS.map(c=>({...c}));
+  }
+  ccRender();
+}
+
+function ccRender(){
+  ['critical','major','minor'].forEach(urgency => {
+    const sec = document.getElementById('cc-section-'+urgency);
+    sec.querySelectorAll('.cc-item').forEach(el=>el.remove());
+    ccCorrections.filter(c=>c.urgency===urgency).forEach(c=>sec.appendChild(ccBuildItem(c)));
+  });
+  ccUpdateStats();
+}
+
+function ccBuildItem(c){
+  const div = document.createElement('div');
+  div.className = 'task-item cc-item' + (c.done?' cc-done':'');
+  div.id = 'cc-ci-'+c.id;
+  div.style.cssText = c.done ? 'background:rgba(29,164,98,0.04);' : '';
+  div.onclick = (e)=>{ if(e.target.tagName!=='BUTTON'&&e.target.tagName!=='TEXTAREA') ccToggle(c.id); };
+
+  const dotColors = {critical:'var(--red)',major:'var(--orange)',minor:'var(--blue)'};
+  const tagBg = {critical:'var(--red-dim)',major:'var(--orange-dim)',minor:'var(--blue-dim)'};
+  const tagColor = {critical:'var(--red)',major:'var(--orange)',minor:'var(--blue)'};
+  const tagLabel = {critical:'Critical',major:'Major',minor:'Minor'}[c.urgency];
+
+  div.innerHTML = `
+    <div style="width:20px;height:20px;border:2px solid ${c.done?'var(--green)':'var(--border)'};border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${c.done?'var(--green)':'#fff'};transition:all .2s;margin-top:1px">
+      <span style="color:#fff;font-size:.7rem;opacity:${c.done?1:0}">✓</span>
+    </div>
+    <div class="task-dot" style="background:${dotColors[c.urgency]};margin-top:5px"></div>
+    <div class="task-body">
+      <div class="task-title${c.done?' struck':''}">${c.text}</div>
+      <div class="task-meta">${c.category}</div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.35rem;flex-wrap:wrap">
+        <span style="font-size:.6rem;font-weight:700;padding:.15rem .45rem;background:${tagBg[c.urgency]};color:${tagColor[c.urgency]}">${tagLabel}</span>
+        <span style="font-size:.6rem;font-weight:700;padding:.15rem .45rem;background:var(--blue-dim);color:var(--blue)">🤖 AI · Chair Validated</span>
+        ${c.done ? '<span style="font-size:.67rem;color:var(--green);font-weight:700">✅ Addressed</span>' : '<span style="font-size:.67rem;color:var(--soft)">📅 Issued 21 Mar 2026</span>'}
+      </div>
+      <button onclick="ccToggleNotes(${c.id},event)" style="font-size:.7rem;font-weight:600;color:var(--blue);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-top:.3rem">${ccNotes[c.id]?'📝 View notes':'+ Add notes'}</button>
+      <textarea id="cc-notes-${c.id}" onclick="event.stopPropagation()" onblur="ccSaveNotes(${c.id})"
+        style="display:none;width:100%;margin-top:.35rem;background:var(--off);border:1.5px solid var(--border);padding:.6rem .8rem;font-family:inherit;font-size:.78rem;color:var(--text);outline:none;resize:vertical;min-height:52px"
+        placeholder="Document what changes you made…">${ccNotes[c.id]||''}</textarea>
+    </div>`;
+  return div;
+}
+
+function ccToggle(id){
+  const c = ccCorrections.find(x=>x.id===id);
+  if(!c) return;
+  c.done = !c.done;
+  ccPersist();
+  // Rebuild just this item
+  const old = document.getElementById('cc-ci-'+id);
+  if(old){ const fresh = ccBuildItem(c); old.replaceWith(fresh); }
+  if(c.done) alert('✅ Marked as addressed');
+  ccUpdateStats();
+}
+
+function ccToggleNotes(id, e){
+  e.stopPropagation();
+  const area = document.getElementById('cc-notes-'+id);
+  if(!area) return;
+  const visible = area.style.display !== 'none';
+  area.style.display = visible ? 'none' : 'block';
+  if(!visible) area.focus();
+}
+
+function ccSaveNotes(id){
+  const area = document.getElementById('cc-notes-'+id);
+  if(!area) return;
+  ccNotes[id] = area.value.trim();
+}
+
+function ccUpdateStats(){
+  const total = ccCorrections.length;
+  const done  = ccCorrections.filter(c=>c.done).length;
+  const pct   = total > 0 ? Math.round((done/total)*100) : 0;
+  const remaining = total - done;
+
+  ['critical','major','minor'].forEach(u=>{
+    const items = ccCorrections.filter(c=>c.urgency===u);
+    const doneU = items.filter(c=>c.done).length;
+    document.getElementById('cc-stat-'+u).textContent = doneU;
+    document.getElementById('cc-sub-'+u).textContent  = `${doneU} of ${items.length} done`;
+  });
+
+  document.getElementById('cc-stat-total').textContent   = done;
+  document.getElementById('cc-sub-total').textContent    = `${done} of ${total} complete`;
+  document.getElementById('cc-progress-fill').style.width = pct+'%';
+  document.getElementById('cc-progress-pct').textContent  = pct+'%';
+  document.getElementById('cc-progress-text').textContent = `${done} / ${total} addressed`;
+  document.getElementById('cc-progress-status').textContent = done===total
+    ? 'All corrections addressed — ready for supervisor sign-off!'
+    : `${remaining} item${remaining!==1?'s':''} remaining`;
+  document.getElementById('cc-gate-remaining').textContent = remaining;
+  document.getElementById('cc-gate-msg').textContent = remaining > 0
+    ? `${remaining} item${remaining!==1?'s':''} remaining before this unlocks`
+    : 'All items complete';
+  document.getElementById('corrections-remaining').textContent = remaining;
+
+  // Sidebar badge
+  const badge = document.getElementById('corrections-badge');
+  badge.textContent = remaining > 0 ? remaining : '';
+  badge.style.display = remaining > 0 ? '' : 'none';
+
+  // Alert
+  const alert = document.getElementById('corrections-alert');
+  if(done===total){
+    alert.className='alert alert-success';
+    alert.innerHTML='<div class="alert-text"><strong>🎉 All corrections addressed!</strong> You can now request supervisor sign-off to advance to Stage 4.</div>';
+    document.getElementById('corrections-status-pill').className='pill pill-approved';
+    document.getElementById('corrections-status-pill').textContent='✅ All Done';
+  }
+
+  // Gate
+  if(done===total){
+    document.getElementById('cc-signoff-gate').style.display='none';
+    document.getElementById('cc-signoff-unlocked').style.display='flex';
+  } else {
+    document.getElementById('cc-signoff-gate').style.display='block';
+    document.getElementById('cc-signoff-unlocked').style.display='none';
+  }
+}
+
+function ccPersist(){
+  try{ localStorage.setItem('papms_corrections', JSON.stringify(ccCorrections)); }catch(e){}
+}
+
+function ccRequestSignoff(){
+  document.getElementById('cc-checklist-card').style.display='none';
+  document.getElementById('cc-complete-banner').style.display='block';
+  document.getElementById('corrections-alert').style.display='none';
+  alert('📨 Sign-off request sent to Dr. Michael Chen');
+}
+
+// Init when corrections page is first visited
+const _origNav = nav;
+nav = function(id, el){
+  _origNav(id, el);
+  if(id==='corrections') ccInit();
+};
 </script>
 </body>
 </html>
